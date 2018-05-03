@@ -693,4 +693,72 @@ class DagManagerTest extends TestCase
             $this->assertExpectedEdge($edges->shift(), $this->d, $this->c, 0);
         });
     }
+
+    /**
+     * Tests:  A  Inserting A-B...twice, each with a different source
+     *         |
+     *         B
+     *
+     * @test
+     */
+    public function it_can_insert_duplicate_edges_using_different_sources()
+    {
+        /**
+         * Arrange/Given:
+         *  - we have the following dag edge(s) in place for source 1:
+         *     - B -> A
+         */
+        $this->createEdge($this->b, $this->a, 'source-1');
+
+        /**
+         * Act/When:
+         *  - insert the following dag edge(s) for source 2:
+         *     - B -> A
+         */
+        $this->createEdge($this->b, $this->a, 'source-2');
+
+        /**
+         * Assert/Then:
+         *  - we find *both* edges
+         */
+        tap(DagEdge::all(), function ($edges) {
+            $this->assertCount(2, $edges);
+            $this->assertExpectedEdge($edges->shift(), $this->b, $this->a, 0, 'source-1');
+            $this->assertExpectedEdge($edges->shift(), $this->b, $this->a, 0, 'source-2');
+        });
+    }
+
+    /**
+     * Tests:  A  Inserting A-B...twice, each with a different source, then deleting one
+     *         |
+     *         B
+     *
+     * @test
+     */
+    public function it_can_delete_a_duplicate_edge_using_the_correct_source()
+    {
+        /**
+         * Arrange/Given:
+         *  - we have the following dag edge(s) in place for source 1:
+         *     - B -> A
+         */
+        $this->createEdge($this->b, $this->a, 'source-1');
+        $this->createEdge($this->b, $this->a, 'source-2');
+
+        /**
+         * Act/When:
+         *  - delete the following dag edge(s) for source 2:
+         *     - B -> A
+         */
+        $result = dag()->deleteEdge($this->b, $this->a, 'source-2');
+
+        /**
+         * Assert/Then:
+         *  - we find *only* the source-1 edge
+         */
+        tap(DagEdge::all(), function ($edges) {
+            $this->assertCount(1, $edges);
+            $this->assertExpectedEdge($edges->shift(), $this->b, $this->a, 0, 'source-1');
+        });
+    }
 }
