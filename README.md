@@ -12,6 +12,7 @@
 * [Installation](#installation)
 * [Usage](#usage)
 * [Unit Testing](#unit-testing)
+* [Additional Notes](#additional-notes)
 * [Changelog](#changelog)
 * [Contributing](#contributing)
 * [Security](#security)
@@ -40,6 +41,13 @@ tbd
 
 tbd
 
+## Additional Notes
+
+May want to consider leveraging any of the following:
+* [relaxedws/lca](https://github.com/relaxedws/lca): A PHP Library to find Lowest Common ancestor from a Directed Acyclic Graph.
+* [clue/graph](https://github.com/clue/graph): A mathematical graph/network library written in PHP.
+* [graphp/algorithms](https://github.com/graphp/algorithms): Graph algorithms in PHP, a collection of common (and not so common) ones.
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
@@ -54,7 +62,7 @@ tbd
 
 ## Credits
 
-The bulk of the work comes from an article by Kemal Erdogan entitled, ["A Model to Represent Directed Acyclic Graphs (DAG) on SQL Databases"](https://www.codeproject.com/Articles/22824/A-Model-to-Represent-Directed-Acyclic-Graphs-DAG-o).
+Lots of credit goes to Kemal Erdogan and his article entitled, ["A Model to Represent Directed Acyclic Graphs (DAG) on SQL Databases"](https://www.codeproject.com/Articles/22824/A-Model-to-Represent-Directed-Acyclic-Graphs-DAG-o).  Additional credit: [xib/DAG_MySQL.sql](https://gist.github.com/xib/21786eeaa970911f0693)
 
 ## License
 
