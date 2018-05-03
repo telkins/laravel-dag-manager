@@ -18,7 +18,7 @@ This package allows you to create, persist, and remove directed acyclic graphs.
 * [Credits](#credits)
 * [License](#license)
 
-## Usage
+## Basic Usage
 
 Creating a direct edge:
 
