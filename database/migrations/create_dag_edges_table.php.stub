@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateDagEdgesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('dag_edges', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('entry_edge_id')->nullable()->comment('The ID of the incoming edge to the start vertex that is the creation reason for this implied edge; direct edges contain the same value as the Id column');
+            $table->unsignedInteger('direct_edge_id')->nullable()->comment('The ID of the direct edge that caused the creation of this implied edge; direct edges contain the same value as the Id column');
+            $table->unsignedInteger('exit_edge_id')->nullable()->comment('The ID of the outgoing edge from the end vertex that is the creation reason for this implied edge; direct edges contain the same value as the Id column');
+            $table->unsignedInteger('start_vertex')->comment('The ID of the start vertex');
+            $table->unsignedInteger('end_vertex')->comment('The ID of the end vertex');
+            $table->integer('hops')->comment('Indicates how many vertex hops are necessary for the path; it is zero for direct edges');
+            $table->string('source', 50)->comment('A column to indicate the context in which the graph is created; useful if we have more than one DAG to be represented within the same application  CAUTION: you need to make sure that the IDs of vertices from different sources never clash; the best is probably use of UUIDs');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('dag_edges');
+    }
+}

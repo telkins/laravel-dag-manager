@@ -2,6 +2,8 @@
     "name": "telkins/laravel-dag-manager",
     "description": "A SQL-based Directed Acyclic Graph (DAG) solution for Laravel.",
     "keywords": [
+        "telkins",
+        "laravel-dag-manager",
         "sql",
         "dag",
         "directed",
@@ -14,29 +16,34 @@
     "authors": [
         {
             "name": "Travis Elkins",
-            "email": "travis.elkins+github@gmail.com"
+            "email": "travis.elkins+github@gmail.com",
+            "role": "Developer"
         }
     ],
     "require": {
         "php" : ">=7.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.5"
+        "phpunit/phpunit": "^7.0",
+        "orchestra/testbench": "~3.6.0"
     },
     "autoload": {
         "psr-4": {
             "Telkins\\Dag\\": "src"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
-            "Telkins\\Dag\\Test\\": "tests"
+            "Telkins\\Dag\\Tests\\": "tests"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Telkins\\Dag\\DagServiceProvider"
+                "Telkins\\Dag\\Providers\\DagServiceProvider"
             ]
         }
     }
