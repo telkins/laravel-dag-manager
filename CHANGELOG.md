@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Introduced some new tests for adding/deleting using different sources.
+
+### Changed
+- Indexed `dag_edges.source`.
+### Fixed
+- Fixed a minor section title error in [README](README.md).
 
 ## [0.0.2] - 2018-05-03
 ### Added
