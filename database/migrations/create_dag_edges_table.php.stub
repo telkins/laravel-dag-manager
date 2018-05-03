@@ -21,7 +21,7 @@ class CreateDagEdgesTable extends Migration
             $table->unsignedInteger('start_vertex')->comment('The ID of the start vertex');
             $table->unsignedInteger('end_vertex')->comment('The ID of the end vertex');
             $table->integer('hops')->comment('Indicates how many vertex hops are necessary for the path; it is zero for direct edges');
-            $table->string('source', 50)->comment('A column to indicate the context in which the graph is created; useful if we have more than one DAG to be represented within the same application  CAUTION: you need to make sure that the IDs of vertices from different sources never clash; the best is probably use of UUIDs');
+            $table->string('source', 50)->index()->comment('A column to indicate the context in which the graph is created; useful if we have more than one DAG to be represented within the same application  CAUTION: you need to make sure that the IDs of vertices from different sources never clash; the best is probably use of UUIDs');
             $table->timestamps();
         });
     }
