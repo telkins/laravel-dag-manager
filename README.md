@@ -111,7 +111,12 @@ tbd
 
 ## Credits
 
-Lots of credit goes to Kemal Erdogan and his article entitled, ["A Model to Represent Directed Acyclic Graphs (DAG) on SQL Databases"](https://www.codeproject.com/Articles/22824/A-Model-to-Represent-Directed-Acyclic-Graphs-DAG-o).  Additional credit: [xib/DAG_MySQL.sql](https://gist.github.com/xib/21786eeaa970911f0693)
+- [Travis Elkins](https://github.com/telkins)
+- [All contributors](../../contributors)
+
+Additionally:
+- Kemal Erdogan and his article entitled, ["A Model to Represent Directed Acyclic Graphs (DAG) on SQL Databases"](https://www.codeproject.com/Articles/22824/A-Model-to-Represent-Directed-Acyclic-Graphs-DAG-o).
+- [xib](https://github.com/xib) and his MySQL stored procedures port (which is not currently used, but may be in a future version): [xib/DAG_MySQL.sql](https://gist.github.com/xib/21786eeaa970911f0693)
 
 ## License
 
