@@ -6,10 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- ...
+
+## [0.0.3] - 2018-05-04
+### Added
 - Introduced some new tests for adding/deleting using different sources.
+- Added implicit requirements for Illuminate DB and Support dependencies.
+- Update minimum PHP and Laravel requirements to 7.1.3 and 5.6, respectively.
 
 ### Changed
 - Indexed `dag_edges.source`.
+
 ### Fixed
 - Fixed a minor section title error in [README](README.md).
 
@@ -25,5 +32,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - A set of tests.
 - Minimal documentation.
 
-[Unreleased]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.1...v0.0.2
