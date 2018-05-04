@@ -36,7 +36,7 @@ $deleted = dag()->deleteEdge($startVertex, $endVertex, $source);
 
 ## Installation
 
-This package can be used in Laravel 5.6 or higher.
+This package requires Laravel 5.6 or higher.
 
 You can install the package via composer:
 
@@ -44,7 +44,7 @@ You can install the package via composer:
 composer require telkins/laravel-dag-manager
 ```
 
-In Laravel 5.6 the service provider will automatically get registered.
+The service provider will automatically get registered.
 
 You can optionally publish the config file with:
 ```bash
