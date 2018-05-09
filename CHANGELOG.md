@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - ...
 
+## [0.0.5] - 2018-05-09
+### Fixed
+- Corrected copy/paste filename error related to migration filename and publishing.
+
 ## [0.0.4] - 2018-05-09
 ### Added
 - Introduced the ability to publish the migration and updated [README](README.md) accordingly.
@@ -39,7 +43,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - A set of tests.
 - Minimal documentation.
 
-[Unreleased]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.1...v0.0.2
