@@ -40,11 +40,19 @@ This package requires Laravel 5.6 or higher.
 
 You can install the package via composer:
 
-``` bash
+```bash
 composer require telkins/laravel-dag-manager
 ```
 
-The service provider will automatically get registered.
+The package will automatically register itself.
+
+You can publish the migration with:
+
+```bash
+php artisan vendor:publish --provider="Telkins\Dag\Providers\DagServiceProvider" --tag="migrations"
+```
+
+Note: The default migration assumes you are using integers for your DAG edge IDs.
 
 You can optionally publish the config file with:
 ```bash

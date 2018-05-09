@@ -17,6 +17,14 @@ class DagServiceProvider extends ServiceProvider
         ], 'config');
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/laravel-dag-manager.php', 'laravel-dag-manager');
+
+        if (! class_exists('CreateDagEdgesTable')) {
+            $timestamp = date('Y_m_d_His', time());
+
+            $this->publishes([
+                __DIR__ . '/../../migrations/_create_dag_edges_table.php.stub' => database_path("/migrations/{$timestamp}_create_dag_edges_table.php"),
+            ], 'migrations');
+        }
     }
 
     /**
