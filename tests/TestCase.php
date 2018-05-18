@@ -40,6 +40,7 @@ class TestCase extends Orchestra
     {
         $this->resetDatabase();
         $this->createDagEdgesTable();
+        $this->createTestModelTable($app);
     }
 
     protected function resetDatabase()
@@ -52,5 +53,18 @@ class TestCase extends Orchestra
         include_once __DIR__ . '/../database/migrations/create_dag_edges_table.php.stub';
 
         (new \CreateDagEdgesTable())->up();
+    }
+
+    /**
+     * @param \Illuminate\Foundation\Application $app
+     */
+    protected function createTestModelTable(Application $app)
+    {
+        $app['db']->connection()->getSchemaBuilder()->create('test_models', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 }

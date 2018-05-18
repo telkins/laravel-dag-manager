@@ -92,7 +92,29 @@ Please be mindful of this when creating "excessively" large and/or complex graph
 
 ## Usage
 
-tbd
+For Eloquent models that are "DAG managed", you can add the `Telkins\Models\Traits\IsDagManaged` trait:
+```php
+use Illuminate\Database\Eloquent\Model;
+use Telkins\Models\Traits\IsDagManaged;
+
+class MyModel extends Model
+{
+    use IsDagManaged;
+
+    // ...
+}
+```
+
+This will allow you to easily access certain functionality from your model class.
+
+To apply a scope that only includes models descending from the specified model ID:
+```php
+$descendants = MyModel::dagDescendantsOf($myModel->id, 'my-source')->get();
+```
+
+An ID and source must be provided.  You may optionally provide the following arguments:
+* `$order`: This will order the results by the number of hops.  This can be `'asc'` (default), `'desc'`, or something falsy for no ordering.
+* `$distinct`: This will return a distinct set of entries.  Sometimes it's possible to have the same descendant appear via multiple paths.  If it's desirable to get this in your result set multiple times, then pass `false`.
 
 ## Unit Testing
 

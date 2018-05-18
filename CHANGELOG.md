@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - ...
 
+## [0.0.7] - 2018-05-18
+### Added
+- Introduced an Eloquent model trait, `Telkins\Dag\Models\Traits\IsDagManaged` to assist in some basic, helpful functionality for "DAG managed" models.
+
 ## [0.0.6] - 2018-05-09
 ### Fixed
 - Corrected migration filename error.  Third time's the charm...?!
@@ -47,7 +51,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - A set of tests.
 - Minimal documentation.
 
-[Unreleased]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.6...HEAD
+[Unreleased]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.7...HEAD
+[0.0.7]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.3...v0.0.4
