@@ -1,4 +1,4 @@
-# A SQL-based Directed Acyclic Graph (DAG) solution for Laravel.
+# A SQL-based Directed Acyclic Graph (DAG) solution for Laravel
 
 [![Latest Stable Version](https://poser.pugx.org/telkins/laravel-dag-manager/v/stable)](https://packagist.org/packages/telkins/laravel-dag-manager)
 [![Total Downloads](https://poser.pugx.org/telkins/laravel-dag-manager/downloads)](https://packagist.org/packages/telkins/laravel-dag-manager)
