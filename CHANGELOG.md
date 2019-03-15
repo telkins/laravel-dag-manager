@@ -61,8 +61,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - A set of tests.
 - Minimal documentation.
 
-[Unreleased]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.8...HEAD
-[0.0.8]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.7...v0.0.8
+[Unreleased]: https://github.com/telkins/laravel-dag-manager/compare/v0.1.0...HEAD
+[0.0.8]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.7...v0.1.0
 [0.0.7]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.4...v0.0.5
