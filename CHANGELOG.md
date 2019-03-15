@@ -6,8 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Changed
-- Minor documentation update/clean-up.
 - ...
+
+## [0.1.0] - 2019-03-15
+### Added
+- Updated the requirements section in [README](README.md) to include minimum PHP version.
+
+### Changed
+- Minor documentation update/clean-up.
+- Now supporting Laravel 5.7 and 5.8.
+- Updated phpunit version.
+- Now using unsigned big integer fields in `dag_edges` table .
 
 ## [0.0.7] - 2018-05-18
 ### Added
@@ -52,7 +61,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - A set of tests.
 - Minimal documentation.
 
-[Unreleased]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.7...HEAD
+[Unreleased]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.8...HEAD
+[0.0.8]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/telkins/laravel-dag-manager/compare/v0.0.4...v0.0.5
