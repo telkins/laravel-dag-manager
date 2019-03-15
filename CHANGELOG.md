@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Minor documentation update/clean-up.
 - Now supporting Laravel 5.7 and 5.8.
 - Updated phpunit version.
-- Now using unsigned big integer fields in `dag_edges` table .
+- Now using unsigned big integer fields in `dag_edges` table.
 
 ## [0.0.7] - 2018-05-18
 ### Added
