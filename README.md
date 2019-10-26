@@ -116,9 +116,11 @@ An ID and source must be provided.  You may optionally provide the following arg
 * `$order`: This will order the results by the number of hops.  This can be `'asc'` (default), `'desc'`, or something falsy for no ordering.
 * `$distinct`: This determines whether or not the scope will return a distinct set of entries.  Sometimes it's possible to have the same descendant appear via multiple paths.  If it's desirable to get this in your result set multiple times, then pass `false`.  It defaults to `true`.
 
-## Unit Testing
+## Testing
 
-tbd
+```bash
+composer test
+```
 
 ## Additional Notes
 
