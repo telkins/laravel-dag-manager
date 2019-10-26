@@ -42,6 +42,10 @@
             "Telkins\\Dag\\Tests\\": "tests"
         }
     },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
     "extra": {
         "laravel": {
             "providers": [
