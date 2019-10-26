@@ -10,7 +10,7 @@ This package allows you to create, persist, and remove directed acyclic graphs.
 * [Installation](#installation)
 * [Usage](#usage)
 * [Warning](#warning)
-* [Unit Testing](#unit-testing)
+* [Testing](#testing)
 * [Additional Notes](#additional-notes)
 * [Changelog](#changelog)
 * [Contributing](#contributing)
