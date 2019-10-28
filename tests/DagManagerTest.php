@@ -4,24 +4,20 @@ namespace Telkins\Dag\Tests;
 
 use Telkins\Dag\Models\DagEdge;
 use Illuminate\Support\Collection;
+use Telkins\Dag\Tests\Support\CreatesEdges;
 use Telkins\Dag\Exceptions\TooManyHopsException;
 use Telkins\Dag\Exceptions\CircularReferenceException;
 
 class DagManagerTest extends TestCase
 {
+    use CreatesEdges;
+
     protected $a = 1;
     protected $b = 2;
     protected $c = 3;
     protected $d = 4;
     protected $e = 5;
     protected $f = 6;
-
-    protected $source = 'test-source';
-
-    protected function createEdge(int $startVertex, int $endVertex, string $source = null)
-    {
-        return dag()->createEdge($startVertex, $endVertex, ($source ?? $this->source));
-    }
 
     protected function assertExpectedEdge(DagEdge $actual, int $startVertex, int $endVertex, int $hops, string $source = null)
     {
