@@ -107,14 +107,19 @@ class MyModel extends Model
 
 This will allow you to easily access certain functionality from your model class.
 
-To apply a scope that only includes models descending from the specified model ID:
+To apply a scope that only includes models that are descendants of the specified model ID:
 ```php
 $descendants = MyModel::dagDescendantsOf($myModel->id, 'my-source')->get();
 ```
 
-An ID and source must be provided.  You may optionally provide the following arguments:
-* `$order`: This will order the results by the number of hops.  This can be `'asc'` (default), `'desc'`, or something falsy for no ordering.
-* `$distinct`: This determines whether or not the scope will return a distinct set of entries.  Sometimes it's possible to have the same descendant appear via multiple paths.  If it's desirable to get this in your result set multiple times, then pass `false`.  It defaults to `true`.
+An ID and source must be provided.
+
+Likewise, to apply a scope that only includes models that are ancestors of the specified model ID:
+```php
+$descendants = MyModel::dagAncestorsOf($myModel->id, 'my-source')->get();
+```
+
+Again, an ID and source must be provided.
 
 ## Testing
 

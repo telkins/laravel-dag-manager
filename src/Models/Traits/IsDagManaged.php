@@ -8,29 +8,46 @@ trait IsDagManaged
      * Scope a query to only include models descending from the specified model ID.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param int $modelId
+     * @param int    $modelId
      * @param string $source
-     * @param string $order
-     * @param bool $distinct
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeDagDescendantsOf($query, int $modelId, string $source, string $order = 'asc', bool $distinct = true)
+    public function scopeDagDescendantsOf($query, int $modelId, string $source)
     {
-        $query->whereIn($this->getQualifiedKeyName(), function ($query) use ($modelId, $source, $order, $distinct) {
-            if ($distinct) {
-                $query->distinct();
-            }
+        $this->scopeDagRelationsOf($query, $modelId, $source, true);
+    }
 
-            $query->select('dag_edges.start_vertex')
+    /**
+     * Scope a query to only include models that are ancestors of the specified model ID.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int    $modelId
+     * @param string $source
+     */
+    public function scopeDagAncestorsOf($query, int $modelId, string $source)
+    {
+        $this->scopeDagRelationsOf($query, $modelId, $source, false);
+    }
+
+    /**
+     * Scope a query to only include models that are relations of (descendants or ancestors) of the specified model ID.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int    $modelId
+     * @param string $source
+     * @param bool.  $down
+     */
+    public function scopeDagRelationsOf($query, int $modelId, string $source, bool $down)
+    {
+        $query->whereIn($this->getQualifiedKeyName(), function ($query) use ($modelId, $source, $down) {
+            $selectField = $down ? 'start_vertex' : 'end_vertex';
+            $whereField = $down ? 'end_vertex' : 'start_vertex';
+
+            $query->select("dag_edges.{$selectField}")
                 ->from('dag_edges')
                 ->where([
-                    ['dag_edges.end_vertex', $modelId],
+                    ["dag_edges.{$whereField}", $modelId],
                     ['dag_edges.source', $source],
                 ]);
-
-            if ($order && in_array($order, ['asc', 'desc'])) {
-                $query->orderBy('dag_edges.hops', $order);
-            }
         });
     }
 }
