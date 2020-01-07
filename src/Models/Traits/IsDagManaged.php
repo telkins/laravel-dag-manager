@@ -11,9 +11,9 @@ trait IsDagManaged
      * @param int    $modelId
      * @param string $source
      */
-    public function scopeDagDescendantsOf($query, int $modelId, string $source)
+    public function scopeDagDescendantsOf($query, int $modelId, string $source, ?int $maxHops = null)
     {
-        $this->scopeDagRelationsOf($query, $modelId, $source, true);
+        $this->scopeDagRelationsOf($query, $modelId, $source, true, $maxHops);
     }
 
     /**
@@ -23,9 +23,9 @@ trait IsDagManaged
      * @param int    $modelId
      * @param string $source
      */
-    public function scopeDagAncestorsOf($query, int $modelId, string $source)
+    public function scopeDagAncestorsOf($query, int $modelId, string $source, ?int $maxHops = null)
     {
-        $this->scopeDagRelationsOf($query, $modelId, $source, false);
+        $this->scopeDagRelationsOf($query, $modelId, $source, false, $maxHops);
     }
 
     /**
@@ -36,9 +36,13 @@ trait IsDagManaged
      * @param string $source
      * @param bool.  $down
      */
-    public function scopeDagRelationsOf($query, int $modelId, string $source, bool $down)
+    public function scopeDagRelationsOf($query, int $modelId, string $source, bool $down, ?int $maxHops = null)
     {
-        $query->whereIn($this->getQualifiedKeyName(), function ($query) use ($modelId, $source, $down) {
+        $maxHopsConfig = config('laravel-dag-manager.max_hops');
+        $maxHops = $maxHops ?? $maxHopsConfig;
+        $maxHops = min($maxHops, $maxHopsConfig);
+
+        $query->whereIn($this->getQualifiedKeyName(), function ($query) use ($modelId, $source, $maxHops, $down) {
             $selectField = $down ? 'start_vertex' : 'end_vertex';
             $whereField = $down ? 'end_vertex' : 'start_vertex';
 
@@ -47,6 +51,7 @@ trait IsDagManaged
                 ->where([
                     ["dag_edges.{$whereField}", $modelId],
                     ['dag_edges.source', $source],
+                    ['dag_edges.hops', '<=', $maxHops],
                 ]);
         });
     }
