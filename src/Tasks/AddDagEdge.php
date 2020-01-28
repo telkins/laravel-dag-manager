@@ -260,7 +260,7 @@ class AddDagEdge
     protected function guardAgainstExceedingMaximumHops(Collection $newEdges)
     {
         if ($newEdges->isNotEmpty() && ($newEdges->last()->hops > $this->maxHops)) {
-            throw new TooManyHopsException("Maximum hops ({$this->maxHops}) exceeded");
+            throw TooManyHopsException::make($this->maxHops);
         }
     }
 }
