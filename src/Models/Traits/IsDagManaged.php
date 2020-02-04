@@ -39,8 +39,9 @@ trait IsDagManaged
     public function scopeDagRelationsOf($query, int $modelId, string $source, bool $down, ?int $maxHops = null)
     {
         $maxHopsConfig = config('laravel-dag-manager.max_hops');
-        $maxHops = $maxHops ?? $maxHopsConfig;
-        $maxHops = min($maxHops, $maxHopsConfig);
+        $maxHops = $maxHops ?? $maxHopsConfig; // prefer input over config
+        $maxHops = min($maxHops, $maxHopsConfig); // no larger than config
+        $maxHops = max($maxHops, 0); // no smaller than zero
 
         $query->whereIn($this->getQualifiedKeyName(), function ($query) use ($modelId, $source, $maxHops, $down) {
             $selectField = $down ? 'start_vertex' : 'end_vertex';

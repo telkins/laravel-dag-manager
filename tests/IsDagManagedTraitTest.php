@@ -391,6 +391,7 @@ class IsDagManagedTraitTest extends TestCase
             [2, ['b', 'c', 'd']],
             [3, ['b', 'c', 'd']],
             [null, ['b', 'c', 'd']],
+            [-1, ['b']],
         ];
     }
 
@@ -460,6 +461,7 @@ class IsDagManagedTraitTest extends TestCase
             [2, ['b', 'c', 'd', 'e', 'f']],
             [3, ['b', 'c', 'd', 'e', 'f']],
             [null, ['b', 'c', 'd', 'e', 'f']],
+            [-1, ['b', 'c']],
         ];
     }
 
@@ -518,6 +520,7 @@ class IsDagManagedTraitTest extends TestCase
             [1, ['c', 'b']],
             [2, ['c', 'b', 'a']],
             [null, ['c', 'b', 'a']],
+            [-1, ['c']],
         ];
     }
 
@@ -587,6 +590,7 @@ class IsDagManagedTraitTest extends TestCase
             [2, ['e', 'd', 'b', 'c', 'a']],
             [3, ['e', 'd', 'b', 'c', 'a']],
             [null, ['e', 'd', 'b', 'c', 'a']],
+            [-1, ['e', 'd']],
         ];
     }
 }
