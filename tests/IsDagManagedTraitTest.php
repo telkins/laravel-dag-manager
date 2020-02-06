@@ -2,6 +2,7 @@
 
 namespace Telkins\Dag\Tests;
 
+use InvalidArgumentException;
 use Telkins\Dag\Tests\Support\TestModel;
 use Telkins\Dag\Tests\Support\CreatesEdges;
 
@@ -592,5 +593,243 @@ class IsDagManagedTraitTest extends TestCase
             [null, ['e', 'd', 'b', 'c', 'a']],
             [-1, ['e', 'd']],
         ];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideComplexInputForComplexBoxDiamondDown
+     */
+    public function it_can_get_descendants_with_complex_input($modelNames, $maxHops, $expectedNames)
+    {
+        /**
+         * Arrange/Given:
+         *  - we have a "complex box diamond"
+         */
+        $models = $this->buildComplexBoxDiamond();
+
+        // An array of names => an array of IDs, a single name string => an integer ID...
+        if (is_array($modelNames)) {
+            $modelIds = collect($modelNames)->map(function ($name) use ($models) {
+                return $models->where('name', $name)->first()->id;
+            })->all();
+        } else {
+            $modelIds = $models->where('name', $modelNames)->first()->id;
+        }
+
+        /**
+         * Act/When:
+         *  - we attempt to get DAG descendants
+         */
+        $results = TestModel::dagDescendantsOf($modelIds, $this->source, $maxHops)->get();
+
+        /**
+         * Assert/Then:
+         *  - we have a collection with the expected number of entries
+         *  - each of the expected names can be found in the results
+         */
+        $this->assertCount(count($expectedNames), $results);
+        collect($expectedNames)->each(function ($expectedName) use ($results) {
+            $this->assertTrue(in_array($expectedName, $results->pluck('name')->all()));
+        });
+    }
+
+    public function provideComplexInputForComplexBoxDiamondDown()
+    {
+        return [
+            [['b', 'c'], null, ['d', 'e', 'f']],
+            [['b', 'c'], 0, ['d', 'e']],
+            [['b', 'c'], 5, ['d', 'e', 'f']],
+            [['c', 'd'], null, ['e', 'f']],
+            [['c', 'd'], 0, ['e', 'f']],
+            [['c', 'd'], 5, ['e', 'f']],
+            [['a', 'd'], null, ['b', 'c', 'd', 'e', 'f']],
+            [['a', 'd'], 0, ['b', 'c', 'f']],
+            [['a', 'd'], 5, ['b', 'c', 'd', 'e', 'f']],
+            [['a', 'f'], null, ['b', 'c', 'd', 'e', 'f']],
+            [['a', 'f'], 0, ['b', 'c']],
+            [['a', 'f'], 5, ['b', 'c', 'd', 'e', 'f']],
+            ['a', null, ['b', 'c', 'd', 'e', 'f']],
+            ['a', 0, ['b', 'c']],
+            ['a', 5, ['b', 'c', 'd', 'e', 'f']],
+            ['f', null, []],
+            ['f', 0, []],
+            ['f', 5, []],
+            [['a', 'b', 'c', 'd', 'e', 'f'], null, ['b', 'c', 'd', 'e', 'f']],
+            [['a', 'b', 'c', 'd', 'e', 'f'], 0, ['b', 'c', 'd', 'e', 'f']],
+            [['a', 'b', 'c', 'd', 'e', 'f'], 5, ['b', 'c', 'd', 'e', 'f']],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider provideComplexInputForComplexBoxDiamondUp
+     */
+    public function it_can_get_ancestors_with_complex_input($modelNames, $maxHops, $expectedNames)
+    {
+        /**
+         * Arrange/Given:
+         *  - we have a "complex box diamond"
+         */
+        $models = $this->buildComplexBoxDiamond();
+
+        // An array of names => an array of IDs, a single name string => an integer ID...
+        if (is_array($modelNames)) {
+            $modelIds = collect($modelNames)->map(function ($name) use ($models) {
+                return $models->where('name', $name)->first()->id;
+            })->all();
+        } else {
+            $modelIds = $models->where('name', $modelNames)->first()->id;
+        }
+
+        /**
+         * Act/When:
+         *  - we attempt to get DAG ancestors
+         */
+        $results = TestModel::dagAncestorsOf($modelIds, $this->source, $maxHops)->get();
+
+        /**
+         * Assert/Then:
+         *  - we have a collection with the expected number of entries
+         *  - each of the expected names can be found in the results
+         */
+        $this->assertCount(count($expectedNames), $results);
+        collect($expectedNames)->each(function ($expectedName) use ($results) {
+            $this->assertTrue(in_array($expectedName, $results->pluck('name')->all()));
+        });
+    }
+
+    public function provideComplexInputForComplexBoxDiamondUp()
+    {
+        return [
+            [['d', 'e'], null, ['a', 'b', 'c']],
+            [['d', 'e'], 0, ['b', 'c']],
+            [['d', 'e'], 5, ['a', 'b', 'c']],
+            [['c', 'd'], null, ['b', 'a']],
+            [['c', 'd'], 0, ['b', 'a']],
+            [['c', 'd'], 5, ['b', 'a']],
+            [['b', 'f'], null, ['a', 'b', 'c', 'd', 'e']],
+            [['b', 'f'], 0, ['a', 'd', 'e']],
+            [['b', 'f'], 5, ['a', 'b', 'c', 'd', 'e']],
+            [['a', 'f'], null, ['a', 'b', 'c', 'd', 'e']],
+            [['a', 'f'], 0, ['d', 'e']],
+            [['a', 'f'], 5, ['a', 'b', 'c', 'd', 'e']],
+            ['a', null, []],
+            ['a', 0, []],
+            ['a', 5, []],
+            ['f', null, ['a', 'b', 'c', 'd', 'e']],
+            ['f', 0, ['d', 'e']],
+            ['f', 5, ['a', 'b', 'c', 'd', 'e']],
+            [['a', 'b', 'c', 'd', 'e', 'f'], null, ['a', 'b', 'c', 'd', 'e']],
+            [['a', 'b', 'c', 'd', 'e', 'f'], 0, ['a', 'b', 'c', 'd', 'e']],
+            [['a', 'b', 'c', 'd', 'e', 'f'], 5, ['a', 'b', 'c', 'd', 'e']],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider providInvalidModelIdArguments
+     */
+    public function it_rejects_invalid_model_id_arguments_to_dag_descendants_of_scope($invalidArgument)
+    {
+        /**
+         * Arrange/Given:
+         *  - ...
+         */
+        // ...
+
+        /**
+         * Assert/Then:
+         *  - the expected exception will be thrown
+         */
+        $this->expectException(InvalidArgumentException::class);
+
+        /**
+         * Act/When:
+         *  - attempt to insert an edge that would create a circular loop
+         */
+        TestModel::dagDescendantsOf($invalidArgument, $this->source);
+    }
+
+    /**
+     * @test
+     * @dataProvider providInvalidModelIdArguments
+     */
+    public function it_rejects_invalid_model_id_arguments_to_dag_ancestors_of_scope($invalidArgument)
+    {
+        /**
+         * Arrange/Given:
+         *  - ...
+         */
+        // ...
+
+        /**
+         * Assert/Then:
+         *  - the expected exception will be thrown
+         */
+        $this->expectException(InvalidArgumentException::class);
+
+        /**
+         * Act/When:
+         *  - attempt to insert an edge that would create a circular loop
+         */
+        TestModel::dagAncestorsOf($invalidArgument, $this->source);
+    }
+
+    public function providInvalidModelIdArguments()
+    {
+        return [
+            [null],
+            [true],
+            [false],
+            [new \stdClass()],
+            ['a.string'],
+            [collect([1, 2, 3])], /** @todo if/when collections are accepted, this will need to be removed. */
+            [1.0],
+        ];
+    }
+
+    /**
+     * Builds:  A
+     *         / \
+     *        B   C
+     *        | \ |
+     *        D   E
+     *         \ /
+     *          F
+     */
+    protected function buildComplexBoxDiamond()
+    {
+        /**
+         * We have the following test models:
+         *  - a - f
+         */
+        $models = collect([
+            $a = TestModel::create(['name' => 'a']),
+            $b = TestModel::create(['name' => 'b']),
+            $c = TestModel::create(['name' => 'c']),
+            $d = TestModel::create(['name' => 'd']),
+            $e = TestModel::create(['name' => 'e']),
+            $f = TestModel::create(['name' => 'f']),
+        ]);
+
+        /**
+         * We have the following dag edge(s) in place:
+         *  - B -> A
+         *  - D -> B
+         *  - E -> B
+         *  - C -> A
+         *  - E -> C
+         *  - F -> D
+         *  - F -> E
+         */
+        $this->createEdge($b->id, $a->id);
+        $this->createEdge($d->id, $b->id);
+        $this->createEdge($e->id, $b->id);
+        $this->createEdge($c->id, $a->id);
+        $this->createEdge($e->id, $c->id);
+        $this->createEdge($f->id, $d->id);
+        $this->createEdge($f->id, $e->id);
+
+        return $models;
     }
 }
