@@ -36,7 +36,7 @@ $deleted = dag()->deleteEdge($startVertex, $endVertex, $source);
 
 ## Installation
 
-This package requires PHP 7.2 or higher as well as Laravel 5.6 or higher.
+This package requires PHP 7.2 or higher as well as Laravel 6.0 or higher.
 
 You can install the package via composer:
 

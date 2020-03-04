@@ -496,8 +496,7 @@ class DagManagerTest extends TestCase
          */
         $this->expectException(TooManyHopsException::class);
 
-        /** @todo This assertion to be replace by expectExceptionMessageMatches() from 9.0. */
-        $this->expectExceptionMessageRegExp('/This operation exceeded the maximum allowable hops \(\d\)\./');
+        $this->expectExceptionMessageMatches('/This operation exceeded the maximum allowable hops \(\d\)\./');
 
         /**
          * Act/When:
