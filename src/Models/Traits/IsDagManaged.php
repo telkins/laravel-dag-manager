@@ -15,7 +15,7 @@ trait IsDagManaged
      */
     public function scopeDagDescendantsOf($query, $modelId, string $source, ?int $maxHops = null)
     {
-        $this->scopeDagRelationsOf($query, $modelId, $source, true, $maxHops);
+        $this->queryDagRelations($query, $modelId, $source, true, $maxHops);
     }
 
     /**
@@ -27,7 +27,20 @@ trait IsDagManaged
      */
     public function scopeDagAncestorsOf($query, $modelId, string $source, ?int $maxHops = null)
     {
-        $this->scopeDagRelationsOf($query, $modelId, $source, false, $maxHops);
+        $this->queryDagRelations($query, $modelId, $source, false, $maxHops);
+    }
+
+    /**
+     * Scope a query to only include models that are related to (either descendants *or* ancestors) the specified model ID.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int|array $modelId
+     * @param string    $source
+     */
+    public function scopeDagRelationsOf($query, $modelId, string $source, ?int $maxHops = null)
+    {
+        $this->queryDagRelations($query, $modelId, $source, false, $maxHops);
+        $this->queryDagRelations($query, $modelId, $source, true, $maxHops, true);
     }
 
     /**
@@ -38,18 +51,15 @@ trait IsDagManaged
      * @param string    $source
      * @param bool      $down
      */
-    public function scopeDagRelationsOf($query, $modelId, string $source, bool $down, ?int $maxHops = null)
+    protected function queryDagRelations($query, $modelId, string $source, bool $down, ?int $maxHops = null, bool $or = false)
     {
-        if (! is_int($modelId) && ! is_array($modelId)) {
-            throw new InvalidArgumentException('Argument, $modelId, must be of type integer or array.');
-        }
+        $this->guardAgainstInvalidModelId($modelId);
 
-        $maxHopsConfig = config('laravel-dag-manager.max_hops');
-        $maxHops = $maxHops ?? $maxHopsConfig; // prefer input over config
-        $maxHops = min($maxHops, $maxHopsConfig); // no larger than config
-        $maxHops = max($maxHops, 0); // no smaller than zero
+        $maxHops = $this->maxHops($maxHops);
 
-        $query->whereIn($this->getQualifiedKeyName(), function ($query) use ($modelId, $source, $maxHops, $down) {
+        $method = $or ? 'orWhereIn' : 'whereIn';
+
+        $query->$method($this->getQualifiedKeyName(), function ($query) use ($modelId, $source, $maxHops, $down) {
             $selectField = $down ? 'start_vertex' : 'end_vertex';
             $whereField = $down ? 'end_vertex' : 'start_vertex';
 
@@ -65,5 +75,22 @@ trait IsDagManaged
                     return $query->where("dag_edges.{$whereField}", $modelId);
                 });
         });
+    }
+
+    protected function guardAgainstInvalidModelId($modelId)
+    {
+        if (! is_int($modelId) && ! is_array($modelId)) {
+            throw new InvalidArgumentException('Argument, $modelId, must be of type integer or array.');
+        }
+    }
+
+    protected function maxHops(?int $maxHops): int
+    {
+        $maxHopsConfig = config('laravel-dag-manager.max_hops');
+        $maxHops = $maxHops ?? $maxHopsConfig; // prefer input over config
+        $maxHops = min($maxHops, $maxHopsConfig); // no larger than config
+        $maxHops = max($maxHops, 0); // no smaller than zero
+
+        return $maxHops;
     }
 }

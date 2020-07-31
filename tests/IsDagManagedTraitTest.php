@@ -13,6 +13,263 @@ class IsDagManagedTraitTest extends TestCase
     /**
      * Tests:  A
      *         |
+     *         B  <-- get relations of this entry
+     *         |
+     *         C
+     *         |
+     *         D
+     *
+     * @test
+     */
+    public function it_can_get_all_relations_from_a_simple_chain()
+    {
+        /**
+         * Arrange/Given:
+         *  - we have the following test models:
+         *     - a - d
+         *  - we have the following dag edge(s) in place:
+         *     - B -> A
+         *     - C -> B
+         *     - D -> C
+         */
+        $a = TestModel::create(['name' => 'a']);
+        $b = TestModel::create(['name' => 'b']);
+        $c = TestModel::create(['name' => 'c']);
+        $d = TestModel::create(['name' => 'd']);
+        $this->createEdge($b->id, $a->id);
+        $this->createEdge($c->id, $b->id);
+        $this->createEdge($d->id, $c->id);
+
+        /**
+         * Act/When:
+         *  - we attempt to get DAG relations from B
+         */
+        $results = TestModel::dagRelationsOf($b->id, $this->source)->get();
+
+        /**
+         * Assert/Then:
+         *  - we have a collection with the following entries:
+         *     - A (from B -> A)
+         *     - C (from C -> B)
+         *     - D (from D -> C)
+         */
+        $this->assertCount(3, $results);
+        $this->assertSame($a->id, $results->shift()->id);
+        $this->assertSame($c->id, $results->shift()->id);
+        $this->assertSame($d->id, $results->shift()->id);
+    }
+
+    /**
+     * Tests:  A
+     *        / \
+     *       B   C  <-- get relations of entry "B"
+     *       | \ |
+     *       D   E
+     *        \ /
+     *         F
+     *
+     * @test
+     */
+    public function it_can_get_all_relations_from_a_complex_box_diamond_part_i()
+    {
+        /**
+         * Arrange/Given:
+         *  - we have a "complex box diamond"
+         */
+        $this->buildComplexBoxDiamond();
+
+        $a = TestModel::where('name', 'a')->first();
+        $b = TestModel::where('name', 'b')->first();
+        $c = TestModel::where('name', 'c')->first();
+        $d = TestModel::where('name', 'd')->first();
+        $e = TestModel::where('name', 'e')->first();
+        $f = TestModel::where('name', 'f')->first();
+
+        /**
+         * Act/When:
+         *  - we attempt to get DAG relations from B
+         */
+        $results = TestModel::dagRelationsOf($b->id, $this->source)->get();
+
+        /**
+         * Assert/Then:
+         *  - we have a collection with the following entries:
+         *     - A (from B -> A)
+         *     - D (from D -> B)
+         *     - E (from E -> B)
+         *     - F (from F -> D -> B *and/or* F -> E -> B)
+         */
+        $this->assertCount(4, $results);
+        $this->assertSame($a->id, $results->shift()->id);
+        $this->assertSame($d->id, $results->shift()->id);
+        $this->assertSame($e->id, $results->shift()->id);
+        $this->assertSame($f->id, $results->shift()->id);
+    }
+
+    /**
+     * Tests:  A
+     *        / \
+     *       B   C  <-- get relations of entry "C"
+     *       | \ |
+     *       D   E
+     *        \ /
+     *         F
+     *
+     * @test
+     */
+    public function it_can_get_all_relations_from_a_complex_box_diamond_part_ii()
+    {
+        /**
+         * Arrange/Given:
+         *  - we have a "complex box diamond"
+         */
+        $this->buildComplexBoxDiamond();
+
+        $a = TestModel::where('name', 'a')->first();
+        $b = TestModel::where('name', 'b')->first();
+        $c = TestModel::where('name', 'c')->first();
+        $d = TestModel::where('name', 'd')->first();
+        $e = TestModel::where('name', 'e')->first();
+        $f = TestModel::where('name', 'f')->first();
+
+        /**
+         * Act/When:
+         *  - we attempt to get DAG relations from C
+         */
+        $results = TestModel::dagRelationsOf($c->id, $this->source)->get();
+
+        /**
+         * Assert/Then:
+         *  - we have a collection with the following entries:
+         *     - A (from C -> A)
+         *     - E (from E -> C)
+         *     - F (from F -> E)
+         */
+        $this->assertCount(3, $results);
+        $this->assertSame($a->id, $results->shift()->id);
+        $this->assertSame($e->id, $results->shift()->id);
+        $this->assertSame($f->id, $results->shift()->id);
+    }
+
+    /**
+     * Tests:  A
+     *         |
+     *         B  <-- get relations of this entry
+     *         |
+     *         C
+     *         |
+     *         D
+     *
+     * @test
+     * @dataProvider provideMaxHopsForSimpleChainAllRelations
+     */
+    public function it_can_get_all_relations_from_a_simple_chain_constrained_by_max_hops($maxHops, $expectedNames)
+    {
+        /**
+         * Arrange/Given:
+         *  - we have the following test models:
+         *     - a - d
+         *  - we have the following dag edge(s) in place:
+         *     - B -> A
+         *     - C -> B
+         *     - D -> C
+         */
+        $a = TestModel::create(['name' => 'a']);
+        $b = TestModel::create(['name' => 'b']);
+        $c = TestModel::create(['name' => 'c']);
+        $d = TestModel::create(['name' => 'd']);
+        $this->createEdge($b->id, $a->id);
+        $this->createEdge($c->id, $b->id);
+        $this->createEdge($d->id, $c->id);
+
+        /**
+         * Act/When:
+         *  - we attempt to get all DAG relations of B, constrained by $maxHops
+         */
+        $results = TestModel::dagRelationsOf($b->id, $this->source, $maxHops)->get();
+
+        /**
+         * Assert/Then:
+         *  - we have a collection with the expected number of entries
+         *  - each of the expected names can be found in the results
+         */
+        $this->assertCount(count($expectedNames), $results);
+        collect($expectedNames)->each(function ($expectedName) use ($results) {
+            $this->assertTrue($results->pluck('name')->contains($expectedName));
+        });
+    }
+
+    public function provideMaxHopsForSimpleChainAllRelations()
+    {
+        return [
+            [0, ['a', 'c']],
+            [1, ['a', 'c', 'd']],
+            [2, ['a', 'c', 'd']],
+            [3, ['a', 'c', 'd']],
+            [null, ['a', 'c', 'd']],
+            [-1, ['a', 'c']],
+        ];
+    }
+
+    /**
+     * Tests:  A
+     *        / \
+     *       B   C   <-- get relations of entry "B"
+     *       | \ |
+     *       D   E
+     *        \ /
+     *         F
+     *
+     * @test
+     * @dataProvider provideMaxHopsForComplexBoxDiamondAllRelations
+     */
+    public function it_can_get_all_relations_from_a_complex_box_diamond_constrained_by_max_hops($maxHops, $expectedNames)
+    {
+        /**
+         * Arrange/Given:
+         *  - we have a "complex box diamond"
+         */
+        $this->buildComplexBoxDiamond();
+
+        $a = TestModel::where('name', 'a')->first();
+        $b = TestModel::where('name', 'b')->first();
+        $c = TestModel::where('name', 'c')->first();
+        $d = TestModel::where('name', 'd')->first();
+        $e = TestModel::where('name', 'e')->first();
+        $f = TestModel::where('name', 'f')->first();
+
+        /**
+         * Act/When:
+         *  - we attempt to get all DAG relations from B, constrained by $maxHops
+         */
+        $results = TestModel::dagRelationsOf($b->id, $this->source, $maxHops)->get();
+
+        /**
+         * Assert/Then:
+         *  - we have a collection with the expected number of entries
+         *  - each of the expected names can be found in the results
+         */
+        $this->assertCount(count($expectedNames), $results);
+        collect($expectedNames)->each(function ($expectedName) use ($results) {
+            $this->assertTrue($results->pluck('name')->contains($expectedName));
+        });
+    }
+
+    public function provideMaxHopsForComplexBoxDiamondAllRelations()
+    {
+        return [
+            [0, ['a', 'd', 'e']],
+            [1, ['a', 'd', 'e', 'f']],
+            [2, ['a', 'd', 'e', 'f']],
+            [3, ['a', 'd', 'e', 'f']],
+            [null, ['a', 'd', 'e', 'f']],
+            [-1, ['a', 'd', 'e']],
+        ];
+    }
+
+    /**
+     * Tests:  A
+     *         |
      *         B  <-- get descendants of this entry
      *         |
      *         C
@@ -72,30 +329,16 @@ class IsDagManagedTraitTest extends TestCase
     {
         /**
          * Arrange/Given:
-         *  - we have the following test models:
-         *     - a - f
-         *  - we have the following dag edge(s) in place:
-         *     - B -> A
-         *     - D -> B
-         *     - E -> B
-         *     - C -> A
-         *     - E -> C
-         *     - F -> D
-         *     - F -> E
+         *  - we have a "complex box diamond"
          */
-        $a = TestModel::create(['name' => 'a']);
-        $b = TestModel::create(['name' => 'b']);
-        $c = TestModel::create(['name' => 'c']);
-        $d = TestModel::create(['name' => 'd']);
-        $e = TestModel::create(['name' => 'e']);
-        $f = TestModel::create(['name' => 'f']);
-        $this->createEdge($b->id, $a->id);
-        $this->createEdge($d->id, $b->id);
-        $this->createEdge($e->id, $b->id);
-        $this->createEdge($c->id, $a->id);
-        $this->createEdge($e->id, $c->id);
-        $this->createEdge($f->id, $d->id);
-        $this->createEdge($f->id, $e->id);
+        $this->buildComplexBoxDiamond();
+
+        $a = TestModel::where('name', 'a')->first();
+        $b = TestModel::where('name', 'b')->first();
+        $c = TestModel::where('name', 'c')->first();
+        $d = TestModel::where('name', 'd')->first();
+        $e = TestModel::where('name', 'e')->first();
+        $f = TestModel::where('name', 'f')->first();
 
         /**
          * Act/When:
@@ -131,30 +374,16 @@ class IsDagManagedTraitTest extends TestCase
     {
         /**
          * Arrange/Given:
-         *  - we have the following test models:
-         *     - a - f
-         *  - we have the following dag edge(s) in place:
-         *     - B -> A
-         *     - D -> B
-         *     - E -> B
-         *     - C -> A
-         *     - E -> C
-         *     - F -> D
-         *     - F -> E
+         *  - we have a "complex box diamond"
          */
-        $a = TestModel::create(['name' => 'a']);
-        $b = TestModel::create(['name' => 'b']);
-        $c = TestModel::create(['name' => 'c']);
-        $d = TestModel::create(['name' => 'd']);
-        $e = TestModel::create(['name' => 'e']);
-        $f = TestModel::create(['name' => 'f']);
-        $this->createEdge($b->id, $a->id);
-        $this->createEdge($d->id, $b->id);
-        $this->createEdge($e->id, $b->id);
-        $this->createEdge($c->id, $a->id);
-        $this->createEdge($e->id, $c->id);
-        $this->createEdge($f->id, $d->id);
-        $this->createEdge($f->id, $e->id);
+        $this->buildComplexBoxDiamond();
+
+        $a = TestModel::where('name', 'a')->first();
+        $b = TestModel::where('name', 'b')->first();
+        $c = TestModel::where('name', 'c')->first();
+        $d = TestModel::where('name', 'd')->first();
+        $e = TestModel::where('name', 'e')->first();
+        $f = TestModel::where('name', 'f')->first();
 
         /**
          * Act/When:
@@ -235,30 +464,16 @@ class IsDagManagedTraitTest extends TestCase
     {
         /**
          * Arrange/Given:
-         *  - we have the following test models:
-         *     - a - f
-         *  - we have the following dag edge(s) in place:
-         *     - B -> A
-         *     - D -> B
-         *     - E -> B
-         *     - C -> A
-         *     - E -> C
-         *     - F -> D
-         *     - F -> E
+         *  - we have a "complex box diamond"
          */
-        $a = TestModel::create(['name' => 'a']);
-        $b = TestModel::create(['name' => 'b']);
-        $c = TestModel::create(['name' => 'c']);
-        $d = TestModel::create(['name' => 'd']);
-        $e = TestModel::create(['name' => 'e']);
-        $f = TestModel::create(['name' => 'f']);
-        $this->createEdge($b->id, $a->id);
-        $this->createEdge($d->id, $b->id);
-        $this->createEdge($e->id, $b->id);
-        $this->createEdge($c->id, $a->id);
-        $this->createEdge($e->id, $c->id);
-        $this->createEdge($f->id, $d->id);
-        $this->createEdge($f->id, $e->id);
+        $this->buildComplexBoxDiamond();
+
+        $a = TestModel::where('name', 'a')->first();
+        $b = TestModel::where('name', 'b')->first();
+        $c = TestModel::where('name', 'c')->first();
+        $d = TestModel::where('name', 'd')->first();
+        $e = TestModel::where('name', 'e')->first();
+        $f = TestModel::where('name', 'f')->first();
 
         /**
          * Act/When:
@@ -294,30 +509,16 @@ class IsDagManagedTraitTest extends TestCase
     {
         /**
          * Arrange/Given:
-         *  - we have the following test models:
-         *     - a - f
-         *  - we have the following dag edge(s) in place:
-         *     - B -> A
-         *     - D -> B
-         *     - E -> B
-         *     - C -> A
-         *     - E -> C
-         *     - F -> D
-         *     - F -> E
+         *  - we have a "complex box diamond"
          */
-        $a = TestModel::create(['name' => 'a']);
-        $b = TestModel::create(['name' => 'b']);
-        $c = TestModel::create(['name' => 'c']);
-        $d = TestModel::create(['name' => 'd']);
-        $e = TestModel::create(['name' => 'e']);
-        $f = TestModel::create(['name' => 'f']);
-        $this->createEdge($b->id, $a->id);
-        $this->createEdge($d->id, $b->id);
-        $this->createEdge($e->id, $b->id);
-        $this->createEdge($c->id, $a->id);
-        $this->createEdge($e->id, $c->id);
-        $this->createEdge($f->id, $d->id);
-        $this->createEdge($f->id, $e->id);
+        $this->buildComplexBoxDiamond();
+
+        $a = TestModel::where('name', 'a')->first();
+        $b = TestModel::where('name', 'b')->first();
+        $c = TestModel::where('name', 'c')->first();
+        $d = TestModel::where('name', 'd')->first();
+        $e = TestModel::where('name', 'e')->first();
+        $f = TestModel::where('name', 'f')->first();
 
         /**
          * Act/When:
@@ -380,7 +581,7 @@ class IsDagManagedTraitTest extends TestCase
          */
         $this->assertCount(count($expectedNames), $results);
         collect($expectedNames)->each(function ($expectedName) use ($results) {
-            $this->assertTrue(in_array($expectedName, $results->pluck('name')->all()));
+            $this->assertTrue($results->pluck('name')->contains($expectedName));
         });
     }
 
@@ -397,7 +598,7 @@ class IsDagManagedTraitTest extends TestCase
     }
 
     /**
-     * Tests:  A   <-- get descendants of entry "B"
+     * Tests:  A   <-- get descendants of entry "A"
      *        / \
      *       B   C
      *       | \ |
@@ -412,30 +613,16 @@ class IsDagManagedTraitTest extends TestCase
     {
         /**
          * Arrange/Given:
-         *  - we have the following test models:
-         *     - a - f
-         *  - we have the following dag edge(s) in place:
-         *     - B -> A
-         *     - D -> B
-         *     - E -> B
-         *     - C -> A
-         *     - E -> C
-         *     - F -> D
-         *     - F -> E
+         *  - we have a "complex box diamond"
          */
-        $a = TestModel::create(['name' => 'a']);
-        $b = TestModel::create(['name' => 'b']);
-        $c = TestModel::create(['name' => 'c']);
-        $d = TestModel::create(['name' => 'd']);
-        $e = TestModel::create(['name' => 'e']);
-        $f = TestModel::create(['name' => 'f']);
-        $this->createEdge($b->id, $a->id);
-        $this->createEdge($d->id, $b->id);
-        $this->createEdge($e->id, $b->id);
-        $this->createEdge($c->id, $a->id);
-        $this->createEdge($e->id, $c->id);
-        $this->createEdge($f->id, $d->id);
-        $this->createEdge($f->id, $e->id);
+        $this->buildComplexBoxDiamond();
+
+        $a = TestModel::where('name', 'a')->first();
+        $b = TestModel::where('name', 'b')->first();
+        $c = TestModel::where('name', 'c')->first();
+        $d = TestModel::where('name', 'd')->first();
+        $e = TestModel::where('name', 'e')->first();
+        $f = TestModel::where('name', 'f')->first();
 
         /**
          * Act/When:
@@ -450,7 +637,7 @@ class IsDagManagedTraitTest extends TestCase
          */
         $this->assertCount(count($expectedNames), $results);
         collect($expectedNames)->each(function ($expectedName) use ($results) {
-            $this->assertTrue(in_array($expectedName, $results->pluck('name')->all()));
+            $this->assertTrue($results->pluck('name')->contains($expectedName));
         });
     }
 
@@ -510,7 +697,7 @@ class IsDagManagedTraitTest extends TestCase
          */
         $this->assertCount(count($expectedNames), $results);
         collect($expectedNames)->each(function ($expectedName) use ($results) {
-            $this->assertTrue(in_array($expectedName, $results->pluck('name')->all()));
+            $this->assertTrue($results->pluck('name')->contains($expectedName));
         });
     }
 
@@ -541,30 +728,16 @@ class IsDagManagedTraitTest extends TestCase
     {
         /**
          * Arrange/Given:
-         *  - we have the following test models:
-         *     - a - f
-         *  - we have the following dag edge(s) in place:
-         *     - B -> A
-         *     - D -> B
-         *     - E -> B
-         *     - C -> A
-         *     - E -> C
-         *     - F -> D
-         *     - F -> E
+         *  - we have a "complex box diamond"
          */
-        $a = TestModel::create(['name' => 'a']);
-        $b = TestModel::create(['name' => 'b']);
-        $c = TestModel::create(['name' => 'c']);
-        $d = TestModel::create(['name' => 'd']);
-        $e = TestModel::create(['name' => 'e']);
-        $f = TestModel::create(['name' => 'f']);
-        $this->createEdge($b->id, $a->id);
-        $this->createEdge($d->id, $b->id);
-        $this->createEdge($e->id, $b->id);
-        $this->createEdge($c->id, $a->id);
-        $this->createEdge($e->id, $c->id);
-        $this->createEdge($f->id, $d->id);
-        $this->createEdge($f->id, $e->id);
+        $this->buildComplexBoxDiamond();
+
+        $a = TestModel::where('name', 'a')->first();
+        $b = TestModel::where('name', 'b')->first();
+        $c = TestModel::where('name', 'c')->first();
+        $d = TestModel::where('name', 'd')->first();
+        $e = TestModel::where('name', 'e')->first();
+        $f = TestModel::where('name', 'f')->first();
 
         /**
          * Act/When:
@@ -579,7 +752,7 @@ class IsDagManagedTraitTest extends TestCase
          */
         $this->assertCount(count($expectedNames), $results);
         collect($expectedNames)->each(function ($expectedName) use ($results) {
-            $this->assertTrue(in_array($expectedName, $results->pluck('name')->all()));
+            $this->assertTrue($results->pluck('name')->contains($expectedName));
         });
     }
 
@@ -629,7 +802,7 @@ class IsDagManagedTraitTest extends TestCase
          */
         $this->assertCount(count($expectedNames), $results);
         collect($expectedNames)->each(function ($expectedName) use ($results) {
-            $this->assertTrue(in_array($expectedName, $results->pluck('name')->all()));
+            $this->assertTrue($results->pluck('name')->contains($expectedName));
         });
     }
 
@@ -694,7 +867,7 @@ class IsDagManagedTraitTest extends TestCase
          */
         $this->assertCount(count($expectedNames), $results);
         collect($expectedNames)->each(function ($expectedName) use ($results) {
-            $this->assertTrue(in_array($expectedName, $results->pluck('name')->all()));
+            $this->assertTrue($results->pluck('name')->contains($expectedName));
         });
     }
 
@@ -773,6 +946,31 @@ class IsDagManagedTraitTest extends TestCase
          *  - attempt to insert an edge that would create a circular loop
          */
         TestModel::dagAncestorsOf($invalidArgument, $this->source);
+    }
+
+    /**
+     * @test
+     * @dataProvider providInvalidModelIdArguments
+     */
+    public function it_rejects_invalid_model_id_arguments_to_dag_relations_of_scope($invalidArgument)
+    {
+        /**
+         * Arrange/Given:
+         *  - ...
+         */
+        // ...
+
+        /**
+         * Assert/Then:
+         *  - the expected exception will be thrown
+         */
+        $this->expectException(InvalidArgumentException::class);
+
+        /**
+         * Act/When:
+         *  - attempt to insert an edge that would create a circular loop
+         */
+        TestModel::dagRelationsOf($invalidArgument, $this->source);
     }
 
     public function providInvalidModelIdArguments()
