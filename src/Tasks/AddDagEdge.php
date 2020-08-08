@@ -11,6 +11,9 @@ use Telkins\Dag\Exceptions\CircularReferenceException;
 
 class AddDagEdge
 {
+    /** @var string */
+    protected $connection;
+
     /** @var int */
     protected $endVertex;
 
@@ -29,12 +32,13 @@ class AddDagEdge
      * @param string $source
      * @param int    $maxHops
      */
-    public function __construct(int $startVertex, int $endVertex, string $source, int $maxHops)
+    public function __construct(int $startVertex, int $endVertex, string $source, int $maxHops, ?string $connection)
     {
         $this->endVertex = $endVertex;
         $this->source = $source;
         $this->startVertex = $startVertex;
         $this->maxHops = $maxHops;
+        $this->connection = $connection;
     }
 
     /**
@@ -144,15 +148,15 @@ class AddDagEdge
      */
     protected function createAsIncomingEdgesToB(DagEdge $edge)
     {
-        $select = DB::table('dag_edges')
+        $select = DB::connection($this->connection)->table('dag_edges')
             ->select([
                 'id as entry_edge_id',
-                DB::raw("{$edge->id} as direct_edge_id"),
-                DB::raw("{$edge->id} as exit_edge_id"),
+                DB::connection($this->connection)->raw("{$edge->id} as direct_edge_id"),
+                DB::connection($this->connection)->raw("{$edge->id} as exit_edge_id"),
                 'start_vertex',
-                DB::raw("{$this->endVertex} as end_vertex"),
-                DB::raw('(hops + 1)  as hops'),
-                DB::raw("'{$this->source}' as source"),
+                DB::connection($this->connection)->raw("{$this->endVertex} as end_vertex"),
+                DB::connection($this->connection)->raw('(hops + 1)  as hops'),
+                DB::connection($this->connection)->raw("'{$this->source}' as source"),
             ])->where([
                 ['end_vertex', $this->startVertex],
                 ['source', $this->source],
@@ -169,15 +173,15 @@ class AddDagEdge
      */
     protected function createAToBsOutgoingEdges(DagEdge $edge)
     {
-        $select = DB::table('dag_edges')
+        $select = DB::connection($this->connection)->table('dag_edges')
             ->select([
-                DB::raw("{$edge->id} as entry_edge_id"),
-                DB::raw("{$edge->id} as direct_edge_id"),
+                DB::connection($this->connection)->raw("{$edge->id} as entry_edge_id"),
+                DB::connection($this->connection)->raw("{$edge->id} as direct_edge_id"),
                 'id as exit_edge_id',
-                DB::raw("{$this->startVertex} as start_vertex"),
+                DB::connection($this->connection)->raw("{$this->startVertex} as start_vertex"),
                 'end_vertex',
-                DB::raw('(hops + 1)  as hops'),
-                DB::raw("'{$this->source}' as source"),
+                DB::connection($this->connection)->raw('(hops + 1)  as hops'),
+                DB::connection($this->connection)->raw("'{$this->source}' as source"),
             ])->where([
                 ['start_vertex', $this->endVertex],
                 ['source', $this->source],
@@ -194,15 +198,15 @@ class AddDagEdge
      */
     protected function createAsIncomingEdgesToEndVertexOfBsOutgoingEdges(DagEdge $edge)
     {
-        $select = DB::table('dag_edges as a')
+        $select = DB::connection($this->connection)->table('dag_edges as a')
             ->select([
-                DB::raw('a.id as entry_edge_id'),
-                DB::raw("{$edge->id} as direct_edge_id"),
+                DB::connection($this->connection)->raw('a.id as entry_edge_id'),
+                DB::connection($this->connection)->raw("{$edge->id} as direct_edge_id"),
                 'b.id as exit_edge_id',
                 'a.start_vertex',
                 'b.end_vertex',
-                DB::raw('(a.hops + b.hops + 2)  as hops'),
-                DB::raw("'{$this->source}' as source"),
+                DB::connection($this->connection)->raw('(a.hops + b.hops + 2)  as hops'),
+                DB::connection($this->connection)->raw("'{$this->source}' as source"),
             ])->crossJoin('dag_edges as b')
             ->where([
                 ['a.end_vertex', $this->startVertex],
@@ -234,7 +238,7 @@ class AddDagEdge
             source) '
         . $select->toSql();
 
-        DB::insert($insertQuery, $bindings);
+        DB::connection($this->connection)->insert($insertQuery, $bindings);
     }
 
     /**

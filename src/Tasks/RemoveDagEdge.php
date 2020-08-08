@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 
 class RemoveDagEdge
 {
+    /** @var string */
+    protected $connection;
+
     /** @var int */
     protected $endVertex;
 
@@ -22,11 +25,12 @@ class RemoveDagEdge
      * @param int    $endVertex
      * @param string $source
      */
-    public function __construct(int $startVertex, int $endVertex, string $source)
+    public function __construct(int $startVertex, int $endVertex, string $source, ?string $connection)
     {
         $this->endVertex = $endVertex;
         $this->source = $source;
         $this->startVertex = $startVertex;
+        $this->connection = $connection;
     }
 
     /**
@@ -64,7 +68,7 @@ class RemoveDagEdge
             return false;
         }
 
-        DB::table('dag_edges')
+        DB::connection($this->connection)->table('dag_edges')
             ->whereIn('id', $idsToDelete)
             ->delete();
 
@@ -83,7 +87,7 @@ class RemoveDagEdge
          * First, collect the "rows that were originally inserted...for this
          * direct edge".
          */
-        $idsToDelete = DB::table('dag_edges')
+        $idsToDelete = DB::connection($this->connection)->table('dag_edges')
             ->select('id')
             ->where('direct_edge_id', $edge->id)
             ->get()
@@ -94,7 +98,7 @@ class RemoveDagEdge
          * afterwards".
          */
         do {
-            $moreDeleteIds = DB::table('dag_edges')
+            $moreDeleteIds = DB::connection($this->connection)->table('dag_edges')
                 ->select('id')
                 ->where('hops', '>', 0)
                 ->whereNotIn('id', $idsToDelete)

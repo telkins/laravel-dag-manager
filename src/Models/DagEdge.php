@@ -3,9 +3,12 @@
 namespace Telkins\Dag\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Telkins\Dag\Concerns\UsesDagConfig;
 
 class DagEdge extends Model
 {
+    use UsesDagConfig;
+
     protected $fillable = [
         'entry_edge_id',
         'direct_edge_id',
@@ -24,4 +27,9 @@ class DagEdge extends Model
         'end_vertex' => 'int',
         'hops' => 'int',
     ];
+
+    public function getConnectionName()
+    {
+        return $this->defaultDatabaseConnectionName();
+    }
 }

@@ -21,27 +21,29 @@ class DagService
     public function __construct(array $config)
     {
         $this->maxHops = $config['max_hops'];
+        $this->connection = $config['default_database_connection_name'];
     }
 
     /**
      * [createEdge description]
      *
-     * @param  int        $startVertex
-     * @param  int        $endVertex
-     * @param  string     $source
+     * @param  int         $startVertex [description]
+     * @param  int         $endVertex   [description]
+     * @param  string      $source      [description]
+     * @param  string|null $connection  [description]
      * @return null|Collection
      * @throws \Telkins\Dag\Exceptions\CircularReferenceException
      * @throws \Telkins\Dag\Exceptions\TooManyHopsException
      */
     public function createEdge(int $startVertex, int $endVertex, string $source)
     {
-        DB::beginTransaction();
+        DB::connection($this->connection)->beginTransaction();
         try {
-            $newEdges = (new AddDagEdge($startVertex, $endVertex, $source, $this->maxHops))->execute();
+            $newEdges = (new AddDagEdge($startVertex, $endVertex, $source, $this->maxHops, $this->connection))->execute();
 
-            DB::commit();
+            DB::connection($this->connection)->commit();
         } catch (Exception $e) {
-            DB::rollBack();
+            DB::connection($this->connection)->rollBack();
 
             throw $e;
         }
@@ -52,20 +54,21 @@ class DagService
     /**
      * [deleteEdge description]
      *
-     * @param  int    $startVertex
-     * @param  int    $endVertex
-     * @param  string $source
+     * @param  int         $startVertex [description]
+     * @param  int         $endVertex   [description]
+     * @param  string      $source      [description]
+     * @param  string|null $connection  [description]
      * @return bool
      */
     public function deleteEdge(int $startVertex, int $endVertex, string $source) : bool
     {
-        DB::beginTransaction();
+        DB::connection($this->connection)->beginTransaction();
         try {
-            $removed = (new RemoveDagEdge($startVertex, $endVertex, $source))->execute();
+            $removed = (new RemoveDagEdge($startVertex, $endVertex, $source, $this->connection))->execute();
 
-            DB::commit();
+            DB::connection($this->connection)->commit();
         } catch (Exception $e) {
-            DB::rollBack();
+            DB::connection($this->connection)->rollBack();
 
             throw $e;
         }
