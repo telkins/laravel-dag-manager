@@ -121,7 +121,12 @@ $ancestors = MyModel::dagAncestorsOf($myModel->id, 'my-source')->get();
 
 Again, an ID and source must be provided.
 
-Both of the aforementioned methods also allow the caller to constrain the results based on the number of hops.  So, if you want to get the immediate children of the specified model ID, then you could do the following:
+Finally, one can apply a scope that will get both ancestors and descendants:
+```php
+$ancestors = MyModel::dagRelationsOf($myModel->id, 'my-source')->get();
+```
+
+Each of the aforementioned methods also allow the caller to constrain the results based on the number of hops.  So, if you want to get the immediate children of the specified model ID, then you could do the following:
 ```php
 $descendants = MyModel::dagDescendantsOf($myModel->id, 'my-source', 0)->get();
 ```
@@ -131,7 +136,7 @@ And, of course, in order to get the parents and grandparents of the specified mo
 $ancestors = MyModel::dagAncestorsOf($myModel->id, 'my-source', 1)->get();
 ```
 
-Not providing the `$maxHops` parameter means that all descendants or ancestors will be returned.
+Not providing the `$maxHops` parameter means that all descendants, ancestors, or relations will be returned.
 
 ## Testing
 
