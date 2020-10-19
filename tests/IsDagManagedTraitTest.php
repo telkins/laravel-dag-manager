@@ -983,6 +983,18 @@ class IsDagManagedTraitTest extends TestCase
             ['a.string'],
             [collect([1, 2, 3])], /** @todo if/when collections are accepted, this will need to be removed. */
             [1.0],
+
+            [[null]],
+            [[true]],
+            [[false]],
+            [[new \stdClass()]],
+            [['a.string']],
+            [[collect([1, 2, 3])]], /** @todo if/when collections are accepted, this will need to be removed. */
+            [[1.0]],
+
+            [[null, 2, 3]],
+            [[1, null, 3]],
+            [[1, 2, null]],
         ];
     }
 
