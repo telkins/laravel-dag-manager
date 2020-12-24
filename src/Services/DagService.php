@@ -22,6 +22,7 @@ use function min;
 class DagService
 {
     protected int $maxHops;
+    private ?string $connection;
 
     public function __construct(array $config)
     {
