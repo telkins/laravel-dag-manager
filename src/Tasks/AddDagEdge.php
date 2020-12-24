@@ -13,28 +13,13 @@ use Telkins\Dag\Models\DagEdge;
 
 class AddDagEdge
 {
-    /** @var string */
-    protected $connection;
+    protected ?string $connection;
+    protected int $endVertex;
+    protected int $maxHops;
+    protected string $source;
+    protected int $startVertex;
 
-    /** @var int */
-    protected $endVertex;
-
-    /** @var int */
-    protected $maxHops;
-
-    /** @var string */
-    protected $source;
-
-    /** @var int */
-    protected $startVertex;
-
-    /**
-     * @param int $startVertex
-     * @param int $endVertex
-     * @param string $source
-     * @param int $maxHops
-     */
-    public function __construct(int $startVertex, int $endVertex, string $source, int $maxHops, ?string $connection)
+    public function __construct(int $startVertex, int $endVertex, string $source, int $maxHops, ?string $connection = null)
     {
         $this->endVertex = $endVertex;
         $this->source = $source;
@@ -62,11 +47,6 @@ class AddDagEdge
         return $newEdges;
     }
 
-    /**
-     * [edgeExists description]
-     *
-     * @return bool
-     */
     protected function edgeExists(): bool
     {
         return DagEdge::where([

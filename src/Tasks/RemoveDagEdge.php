@@ -15,7 +15,7 @@ class RemoveDagEdge
     protected string $source;
     protected int $startVertex;
 
-    public function __construct(int $startVertex, int $endVertex, string $source, ?string $connection)
+    public function __construct(int $startVertex, int $endVertex, string $source, ?string $connection = null)
     {
         $this->endVertex = $endVertex;
         $this->source = $source;
