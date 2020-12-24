@@ -10,7 +10,7 @@ class CreateDagEdgesTable extends Migration
 {
     public function up(): void
     {
-        Schema::create('dag_edges', function (Blueprint $table) {
+        Schema::create($this->getTableName(), function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('entry_edge_id')->nullable()->comment('The ID of the incoming edge to the start vertex that is the creation reason for this implied edge; direct edges contain the same value as the Id column');
             $table->unsignedBigInteger('direct_edge_id')->nullable()->comment('The ID of the direct edge that caused the creation of this implied edge; direct edges contain the same value as the Id column');
@@ -25,6 +25,11 @@ class CreateDagEdgesTable extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('dag_edges');
+        Schema::dropIfExists($this->getTableName());
+    }
+
+    private function getTableName(): string
+    {
+        return config('laravel-dag-manager.table_name');
     }
 }

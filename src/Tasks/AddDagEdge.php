@@ -13,19 +13,21 @@ use Telkins\Dag\Models\DagEdge;
 
 class AddDagEdge
 {
+    protected string $tableName;
     protected ?string $connection;
     protected int $endVertex;
     protected int $maxHops;
     protected string $source;
     protected int $startVertex;
 
-    public function __construct(int $startVertex, int $endVertex, string $source, int $maxHops, ?string $connection = null)
+    public function __construct(int $startVertex, int $endVertex, string $source, int $maxHops, string $tableName, ?string $connection = null)
     {
         $this->endVertex = $endVertex;
         $this->source = $source;
         $this->startVertex = $startVertex;
         $this->maxHops = $maxHops;
         $this->connection = $connection;
+        $this->tableName = $tableName;
     }
 
     /**
@@ -108,7 +110,7 @@ class AddDagEdge
 
     protected function createAsIncomingEdgesToB(DagEdge $edge): void
     {
-        $select = DB::connection($this->connection)->table('dag_edges')
+        $select = DB::connection($this->connection)->table($this->tableName)
             ->select([
                 'id as entry_edge_id',
                 DB::connection($this->connection)->raw("{$edge->id} as direct_edge_id"),
@@ -127,7 +129,7 @@ class AddDagEdge
 
     protected function createAToBsOutgoingEdges(DagEdge $edge): void
     {
-        $select = DB::connection($this->connection)->table('dag_edges')
+        $select = DB::connection($this->connection)->table($this->tableName)
             ->select([
                 DB::connection($this->connection)->raw("{$edge->id} as entry_edge_id"),
                 DB::connection($this->connection)->raw("{$edge->id} as direct_edge_id"),
@@ -146,7 +148,7 @@ class AddDagEdge
 
     protected function createAsIncomingEdgesToEndVertexOfBsOutgoingEdges(DagEdge $edge): void
     {
-        $select = DB::connection($this->connection)->table('dag_edges as a')
+        $select = DB::connection($this->connection)->table($this->tableName.' as a')
             ->select([
                 DB::connection($this->connection)->raw('a.id as entry_edge_id'),
                 DB::connection($this->connection)->raw("{$edge->id} as direct_edge_id"),
@@ -155,7 +157,7 @@ class AddDagEdge
                 'b.end_vertex',
                 DB::connection($this->connection)->raw('(a.hops + b.hops + 2)  as hops'),
                 DB::connection($this->connection)->raw("'{$this->source}' as source"),
-            ])->crossJoin('dag_edges as b')
+            ])->crossJoin($this->tableName.' as b')
             ->where([
                 ['a.end_vertex', $this->startVertex],
                 ['b.start_vertex', $this->endVertex],
@@ -170,14 +172,14 @@ class AddDagEdge
     {
         $bindings = $select->getBindings();
 
-        $insertQuery = 'INSERT into dag_edges (
-            entry_edge_id,
-            direct_edge_id,
-            exit_edge_id,
-            start_vertex,
-            end_vertex,
-            hops,
-            source) '
+        $insertQuery = 'INSERT into `'.$this->tableName.'` (
+            `entry_edge_id`,
+            `direct_edge_id`,
+            `exit_edge_id`,
+            `start_vertex`,
+            `end_vertex`,
+            `hops`,
+            `source`) '
             . $select->toSql();
 
         DB::connection($this->connection)->insert($insertQuery, $bindings);

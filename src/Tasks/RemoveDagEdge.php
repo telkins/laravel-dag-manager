@@ -10,17 +10,19 @@ use Telkins\Dag\Models\DagEdge;
 
 class RemoveDagEdge
 {
+    protected string $tableName;
     protected ?string $connection;
     protected int $endVertex;
     protected string $source;
     protected int $startVertex;
 
-    public function __construct(int $startVertex, int $endVertex, string $source, ?string $connection = null)
+    public function __construct(int $startVertex, int $endVertex, string $source, string $tableName, ?string $connection = null)
     {
         $this->endVertex = $endVertex;
         $this->source = $source;
         $this->startVertex = $startVertex;
         $this->connection = $connection;
+        $this->tableName = $tableName;
     }
 
     /**
@@ -53,7 +55,7 @@ class RemoveDagEdge
             return false;
         }
 
-        DB::connection($this->connection)->table('dag_edges')
+        DB::connection($this->connection)->table($this->tableName)
             ->whereIn('id', $idsToDelete)
             ->delete();
 
@@ -69,7 +71,7 @@ class RemoveDagEdge
          * First, collect the "rows that were originally inserted...for this
          * direct edge".
          */
-        $idsToDelete = DB::connection($this->connection)->table('dag_edges')
+        $idsToDelete = DB::connection($this->connection)->table($this->tableName)
             ->select('id')
             ->where('direct_edge_id', $edge->id)
             ->get()
@@ -80,7 +82,7 @@ class RemoveDagEdge
          * afterwards".
          */
         do {
-            $moreDeleteIds = DB::connection($this->connection)->table('dag_edges')
+            $moreDeleteIds = DB::connection($this->connection)->table($this->tableName)
                 ->select('id')
                 ->where('hops', '>', 0)
                 ->whereNotIn('id', $idsToDelete)

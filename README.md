@@ -62,7 +62,6 @@ php artisan vendor:publish --provider="Telkins\Dag\Providers\DagServiceProvider"
 This is the contents of the published config file:
 ```php
 return [
-
     /**
      *-------------------------------------------------------------------------
      * Max Hops
@@ -77,7 +76,6 @@ return [
      * and memory.  Whether or not it's negligible, noticeable, or impactful
      * depends on a variety of factors.
      */
-
     'max_hops' => 5,
 
     /**
@@ -85,14 +83,22 @@ return [
      * Default Database Connection Name
      *-------------------------------------------------------------------------
      *
-     * This is the name of the database connection where the dag_edges table
+     * This is the name of the database connection where the dag table
      * can be found.
      *
      * Set to `null` to use the default connection.
      */
-
     'default_database_connection_name' => null,
 
+    /**
+     *-------------------------------------------------------------------------
+     * Table Name
+     *-------------------------------------------------------------------------
+     *
+     * This is the name of the table where the dag structure
+     * will be stored.
+     */
+    'table_name' => 'dag_edges',
 ];
 ```
 

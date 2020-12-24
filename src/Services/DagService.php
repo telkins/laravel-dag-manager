@@ -14,7 +14,6 @@ use Telkins\Dag\Tasks\AddDagEdge;
 use Telkins\Dag\Tasks\RemoveDagEdge;
 
 use function collect;
-use function config;
 use function is_int;
 use function max;
 use function min;
@@ -23,11 +22,13 @@ class DagService
 {
     protected int $maxHops;
     private ?string $connection;
+    private string $tableName;
 
     public function __construct(array $config)
     {
         $this->maxHops = $config['max_hops'];
         $this->connection = $config['default_database_connection_name'];
+        $this->tableName = $config['table_name'];
     }
 
     /**
@@ -38,7 +39,7 @@ class DagService
     {
         DB::connection($this->connection)->beginTransaction();
         try {
-            $newEdges = (new AddDagEdge($startVertex, $endVertex, $source, $this->maxHops, $this->connection))->execute();
+            $newEdges = (new AddDagEdge($startVertex, $endVertex, $source, $this->maxHops, $this->tableName, $this->connection))->execute();
 
             DB::connection($this->connection)->commit();
         } catch (Exception $e) {
@@ -54,7 +55,7 @@ class DagService
     {
         DB::connection($this->connection)->beginTransaction();
         try {
-            $removed = (new RemoveDagEdge($startVertex, $endVertex, $source, $this->connection))->execute();
+            $removed = (new RemoveDagEdge($startVertex, $endVertex, $source, $this->tableName, $this->connection))->execute();
 
             DB::connection($this->connection)->commit();
         } catch (Exception $e) {
@@ -88,17 +89,17 @@ class DagService
             $selectField = $down ? 'start_vertex' : 'end_vertex';
             $whereField = $down ? 'end_vertex' : 'start_vertex';
 
-            $query->select("dag_edges.{$selectField}")
-                ->from('dag_edges')
+            $query->select("{$this->tableName}.{$selectField}")
+                ->from($this->tableName)
                 ->where([
-                    ['dag_edges.source', $source],
-                    ['dag_edges.hops', '<=', $maxHops],
+                    [$this->tableName.'.source', $source],
+                    [$this->tableName.'.hops', '<=', $maxHops],
                 ])
-                ->whereIn("dag_edges.{$whereField}", $modelIds);
+                ->whereIn("{$this->tableName}.{$whereField}", $modelIds);
             // ->when(is_array($modelIds), function ($query) use ($whereField, $modelIds) {
-            //     return $query->whereIn("dag_edges.{$whereField}", $modelIds);
+            //     return $query->whereIn("{$this->tableName}.{$whereField}", $modelIds);
             // }, function ($query) use ($whereField, $modelIds) {
-            //     return $query->where("dag_edges.{$whereField}", $modelIds);
+            //     return $query->where("{$this->tableName}.{$whereField}", $modelIds);
             // });
         });
     }
@@ -114,7 +115,7 @@ class DagService
 
     protected function maxHops(?int $maxHops): int
     {
-        $maxHopsConfig = config('laravel-dag-manager.max_hops');
+        $maxHopsConfig = $this->maxHops;
         $maxHops = $maxHops ?? $maxHopsConfig; // prefer input over config
         $maxHops = min($maxHops, $maxHopsConfig); // no larger than config
         $maxHops = max($maxHops, 0); // no smaller than zero
