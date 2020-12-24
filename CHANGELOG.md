@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - ...
 
+## [v1.0.0] - 2020-12-24
+### Added
+- Remove support of Laravel lower than 8.0
+- Remove support of PHP lower than 7.4
+- Add property/argument/return types
+- Make code more strict
+- Remove redundant doc-blocks
+- Make table name configurable
+- Migrate phpunit configuration
+- Make service provider deferrable
+
 ## [v0.10.0] - 2020-09-09
 ### Added
 - Laravel 8.0 support
