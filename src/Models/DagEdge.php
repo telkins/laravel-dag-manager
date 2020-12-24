@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Telkins\Dag\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -20,12 +22,12 @@ class DagEdge extends Model
     ];
 
     protected $casts = [
-        'entry_edge_id' => 'int',
+        'entry_edge_id'  => 'int',
         'direct_edge_id' => 'int',
-        'exit_edge_id' => 'int',
-        'start_vertex' => 'int',
-        'end_vertex' => 'int',
-        'hops' => 'int',
+        'exit_edge_id'   => 'int',
+        'start_vertex'   => 'int',
+        'end_vertex'     => 'int',
+        'hops'           => 'int',
     ];
 
     public function getConnectionName()

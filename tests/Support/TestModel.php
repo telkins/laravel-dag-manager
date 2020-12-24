@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Telkins\Dag\Tests\Support;
 
 use Illuminate\Database\Eloquent\Model;

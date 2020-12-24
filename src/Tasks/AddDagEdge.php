@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Telkins\Dag\Tasks;
 
-use Telkins\Dag\Models\DagEdge;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Query\Builder;
-use Telkins\Dag\Exceptions\TooManyHopsException;
 use Telkins\Dag\Exceptions\CircularReferenceException;
+use Telkins\Dag\Exceptions\TooManyHopsException;
+use Telkins\Dag\Models\DagEdge;
 
 class AddDagEdge
 {
@@ -27,10 +29,10 @@ class AddDagEdge
     protected $startVertex;
 
     /**
-     * @param int    $startVertex
-     * @param int    $endVertex
+     * @param int $startVertex
+     * @param int $endVertex
      * @param string $source
-     * @param int    $maxHops
+     * @param int $maxHops
      */
     public function __construct(int $startVertex, int $endVertex, string $source, int $maxHops, ?string $connection)
     {
@@ -42,16 +44,13 @@ class AddDagEdge
     }
 
     /**
-     * [execute description]
-     *
-     * @return null|Collection
      * @throws CircularReferenceException
      * @throws TooManyHopsException
      */
-    public function execute()
+    public function execute(): ?Collection
     {
         if ($this->edgeExists()) {
-            return;
+            return null;
         }
 
         $this->guardAgainstCircularRelation();
@@ -68,43 +67,35 @@ class AddDagEdge
      *
      * @return bool
      */
-    protected function edgeExists() : bool
+    protected function edgeExists(): bool
     {
         return DagEdge::where([
-            ['start_vertex', $this->startVertex],
-            ['end_vertex', $this->endVertex],
-            ['hops', 0],
-            ['source', $this->source],
-        ])->count() > 0;
+                ['start_vertex', $this->startVertex],
+                ['end_vertex', $this->endVertex],
+                ['hops', 0],
+                ['source', $this->source],
+            ])->count() > 0;
     }
 
     /**
-     * [guardAgainstCircularRelation description]
-     *
-     * @return void
      * @throws CircularReferenceException
      */
-    protected function guardAgainstCircularRelation()
+    protected function guardAgainstCircularRelation(): void
     {
         if ($this->startVertex === $this->endVertex) {
             throw new CircularReferenceException();
         }
 
         if (DagEdge::where([
-            ['start_vertex', $this->endVertex],
-            ['end_vertex', $this->startVertex],
-            ['source', $this->source],
-        ])->count() > 0) {
+                ['start_vertex', $this->endVertex],
+                ['end_vertex', $this->startVertex],
+                ['source', $this->source],
+            ])->count() > 0) {
             throw new CircularReferenceException();
         }
     }
 
-    /**
-     * [createEdge description]
-     *
-     * @return DagEdge
-     */
-    protected function createEdge() : DagEdge
+    protected function createEdge(): DagEdge
     {
         $edge = $this->createDirectEdge($this->startVertex, $this->endVertex, $this->source);
 
@@ -117,36 +108,25 @@ class AddDagEdge
         return $edge;
     }
 
-    /**
-     * [createDirectEdge description]
-     *
-     * @return DagEdge
-     */
-    protected function createDirectEdge() : DagEdge
+    protected function createDirectEdge(): DagEdge
     {
         $edge = DagEdge::create([
             'start_vertex' => $this->startVertex,
-            'end_vertex' => $this->endVertex,
-            'hops' => 0,
-            'source' => $this->source,
+            'end_vertex'   => $this->endVertex,
+            'hops'         => 0,
+            'source'       => $this->source,
         ]);
 
         $edge->update([
-            'entry_edge_id' => $edge->id,
-            'exit_edge_id' => $edge->id,
+            'entry_edge_id'  => $edge->id,
+            'exit_edge_id'   => $edge->id,
             'direct_edge_id' => $edge->id,
         ]);
 
         return $edge;
     }
 
-    /**
-     * [createAsIncomingEdgesToB description]
-     *
-     * @param  DagEdge $edge
-     * @return void
-     */
-    protected function createAsIncomingEdgesToB(DagEdge $edge)
+    protected function createAsIncomingEdgesToB(DagEdge $edge): void
     {
         $select = DB::connection($this->connection)->table('dag_edges')
             ->select([
@@ -165,13 +145,7 @@ class AddDagEdge
         $this->executeInsert($select);
     }
 
-    /**
-     * [createAToBsOutgoingEdges description]
-     *
-     * @param  DagEdge $edge
-     * @return void
-     */
-    protected function createAToBsOutgoingEdges(DagEdge $edge)
+    protected function createAToBsOutgoingEdges(DagEdge $edge): void
     {
         $select = DB::connection($this->connection)->table('dag_edges')
             ->select([
@@ -190,13 +164,7 @@ class AddDagEdge
         $this->executeInsert($select);
     }
 
-    /**
-     * [createAsIncomingEdgesToEndVertexOfBsOutgoingEdges description]
-     *
-     * @param  DagEdge $edge
-     * @return void
-     */
-    protected function createAsIncomingEdgesToEndVertexOfBsOutgoingEdges(DagEdge $edge)
+    protected function createAsIncomingEdgesToEndVertexOfBsOutgoingEdges(DagEdge $edge): void
     {
         $select = DB::connection($this->connection)->table('dag_edges as a')
             ->select([
@@ -218,13 +186,7 @@ class AddDagEdge
         $this->executeInsert($select);
     }
 
-    /**
-     * [executeInsert description]
-     *
-     * @param  Builder $select
-     * @return void
-     */
-    protected function executeInsert(Builder $select)
+    protected function executeInsert(Builder $select): void
     {
         $bindings = $select->getBindings();
 
@@ -236,18 +198,12 @@ class AddDagEdge
             end_vertex,
             hops,
             source) '
-        . $select->toSql();
+            . $select->toSql();
 
         DB::connection($this->connection)->insert($insertQuery, $bindings);
     }
 
-    /**
-     * [getNewlyInsertedEdges description]
-     *
-     * @param  DagEdge $edge
-     * @return Collection
-     */
-    protected function getNewlyInsertedEdges(DagEdge $edge) : Collection
+    protected function getNewlyInsertedEdges(DagEdge $edge): Collection
     {
         return DagEdge::where('direct_edge_id', $edge->id)
             ->orderBy('hops')
@@ -255,13 +211,9 @@ class AddDagEdge
     }
 
     /**
-     * [guardAgainstExceedingMaximumHops description]
-     *
-     * @param  Collection $newEdges
-     * @return void
      * @throws TooManyHopsException
      */
-    protected function guardAgainstExceedingMaximumHops(Collection $newEdges)
+    protected function guardAgainstExceedingMaximumHops(Collection $newEdges): void
     {
         if ($newEdges->isNotEmpty() && ($newEdges->last()->hops > $this->maxHops)) {
             throw TooManyHopsException::make($this->maxHops);

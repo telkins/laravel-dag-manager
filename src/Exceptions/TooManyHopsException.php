@@ -1,18 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Telkins\Dag\Exceptions;
 
 use Exception;
 
 class TooManyHopsException extends Exception
 {
-    /**
-     * Create a new exception instance.
-     *
-     * @param  int $maximumAllowableHops
-     * @return static
-     */
-    public static function make(int $maximumAllowableHops)
+    public static function make(int $maximumAllowableHops): TooManyHopsException
     {
         return new static("This operation exceeded the maximum allowable hops ({$maximumAllowableHops}).");
     }

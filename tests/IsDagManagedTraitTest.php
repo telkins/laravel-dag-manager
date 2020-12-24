@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Telkins\Dag\Tests;
 
 use InvalidArgumentException;
-use Telkins\Dag\Tests\Support\TestModel;
 use Telkins\Dag\Tests\Support\CreatesEdges;
+use Telkins\Dag\Tests\Support\TestModel;
 
 class IsDagManagedTraitTest extends TestCase
 {
@@ -981,7 +983,8 @@ class IsDagManagedTraitTest extends TestCase
             [false],
             [new \stdClass()],
             ['a.string'],
-            [collect([1, 2, 3])], /** @todo if/when collections are accepted, this will need to be removed. */
+            [collect([1, 2, 3])],
+            /** @todo if/when collections are accepted, this will need to be removed. */
             [1.0],
 
             [[null]],
@@ -989,7 +992,8 @@ class IsDagManagedTraitTest extends TestCase
             [[false]],
             [[new \stdClass()]],
             [['a.string']],
-            [[collect([1, 2, 3])]], /** @todo if/when collections are accepted, this will need to be removed. */
+            [[collect([1, 2, 3])]],
+            /** @todo if/when collections are accepted, this will need to be removed. */
             [[1.0]],
 
             [[null, 2, 3]],
