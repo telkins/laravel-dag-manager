@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+
     /**
      *-------------------------------------------------------------------------
      * Max Hops
@@ -17,6 +18,7 @@ return [
      * and memory.  Whether or not it's negligible, noticeable, or impactful
      * depends on a variety of factors.
      */
+
     'max_hops' => 5,
 
     /**
@@ -24,11 +26,12 @@ return [
      * Default Database Connection Name
      *-------------------------------------------------------------------------
      *
-     * This is the name of the database connection where the dag table
-     * can be found.
+     * This is the name of the database connection where the dag table can be
+     * found.
      *
      * Set to `null` to use the default connection.
      */
+
     'default_database_connection_name' => null,
 
     /**
@@ -36,8 +39,9 @@ return [
      * Table Name
      *-------------------------------------------------------------------------
      *
-     * This is the name of the table where the dag structure
-     * will be stored.
+     * This is the name of the table where the dag structure will be stored.
      */
+
     'table_name' => 'dag_edges',
+
 ];
