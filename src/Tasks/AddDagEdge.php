@@ -22,12 +22,12 @@ class AddDagEdge
 
     public function __construct(int $startVertex, int $endVertex, string $source, int $maxHops, string $tableName, ?string $connection = null)
     {
+        $this->startVertex = $startVertex;
         $this->endVertex = $endVertex;
         $this->source = $source;
-        $this->startVertex = $startVertex;
         $this->maxHops = $maxHops;
-        $this->connection = $connection;
         $this->tableName = $tableName;
+        $this->connection = $connection;
     }
 
     /**

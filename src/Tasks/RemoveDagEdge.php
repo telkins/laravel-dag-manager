@@ -10,19 +10,19 @@ use Telkins\Dag\Models\DagEdge;
 
 class RemoveDagEdge
 {
-    protected string $tableName;
     protected ?string $connection;
     protected int $endVertex;
     protected string $source;
     protected int $startVertex;
+    protected string $tableName;
 
     public function __construct(int $startVertex, int $endVertex, string $source, string $tableName, ?string $connection = null)
     {
+        $this->startVertex = $startVertex;
         $this->endVertex = $endVertex;
         $this->source = $source;
-        $this->startVertex = $startVertex;
-        $this->connection = $connection;
         $this->tableName = $tableName;
+        $this->connection = $connection;
     }
 
     /**
