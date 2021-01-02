@@ -53,6 +53,6 @@ trait IsDagManaged
 
     private function getIdsAsArray($ids): array
     {
-        return ! is_array($ids) ? [$ids] : $ids;
+        return is_array($ids) ? $ids : [$ids];
     }
 }
