@@ -1,44 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Telkins\Dag\Tasks;
 
-use Telkins\Dag\Models\DagEdge;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Telkins\Dag\Models\DagEdge;
 
 class RemoveDagEdge
 {
-    /** @var string */
-    protected $connection;
+    protected ?string $connection;
+    protected int $endVertex;
+    protected string $source;
+    protected int $startVertex;
+    protected string $tableName;
 
-    /** @var int */
-    protected $endVertex;
-
-    /** @var string */
-    protected $source;
-
-    /** @var int */
-    protected $startVertex;
-
-    /**
-     * @param int    $startVertex
-     * @param int    $endVertex
-     * @param string $source
-     */
-    public function __construct(int $startVertex, int $endVertex, string $source, ?string $connection)
+    public function __construct(int $startVertex, int $endVertex, string $source, string $tableName, ?string $connection = null)
     {
+        $this->startVertex = $startVertex;
         $this->endVertex = $endVertex;
         $this->source = $source;
-        $this->startVertex = $startVertex;
+        $this->tableName = $tableName;
         $this->connection = $connection;
     }
 
     /**
      * Find and remove the specified direct edge and all dependent edge rows.
-     *
-     * @return bool
      */
-    public function execute()
+    public function execute(): bool
     {
         $edge = DagEdge::where([
             ['start_vertex', $this->startVertex],
@@ -56,11 +46,8 @@ class RemoveDagEdge
 
     /**
      * Remove the specified direct edge and all dependent edge rows.
-     *
-     * @param  DagEdge $edge
-     * @return bool
      */
-    protected function removeDagEdge(DagEdge $edge) : bool
+    protected function removeDagEdge(DagEdge $edge): bool
     {
         $idsToDelete = $this->getIdsToDelete($edge);
 
@@ -68,7 +55,7 @@ class RemoveDagEdge
             return false;
         }
 
-        DB::connection($this->connection)->table('dag_edges')
+        DB::connection($this->connection)->table($this->tableName)
             ->whereIn('id', $idsToDelete)
             ->delete();
 
@@ -77,17 +64,14 @@ class RemoveDagEdge
 
     /**
      * Find and return all edge table entries that need to be deleted.
-     *
-     * @param  DagEdge    $edge
-     * @return Collection
      */
-    protected function getIdsToDelete(DagEdge $edge) : Collection
+    protected function getIdsToDelete(DagEdge $edge): Collection
     {
         /**
          * First, collect the "rows that were originally inserted...for this
          * direct edge".
          */
-        $idsToDelete = DB::connection($this->connection)->table('dag_edges')
+        $idsToDelete = DB::connection($this->connection)->table($this->tableName)
             ->select('id')
             ->where('direct_edge_id', $edge->id)
             ->get()
@@ -98,7 +82,7 @@ class RemoveDagEdge
          * afterwards".
          */
         do {
-            $moreDeleteIds = DB::connection($this->connection)->table('dag_edges')
+            $moreDeleteIds = DB::connection($this->connection)->table($this->tableName)
                 ->select('id')
                 ->where('hops', '>', 0)
                 ->whereNotIn('id', $idsToDelete)

@@ -21,13 +21,14 @@
         }
     ],
     "require": {
-        "php": "^7.2",
-        "illuminate/database": "^6.0|^7.0|^8.0",
-        "illuminate/support": "^6.0|^7.0|^8.0"
+        "php": "^7.4 || ^8.0",
+        "illuminate/contracts": "^7.0 || ^8.0",
+        "illuminate/database": "^7.0 || ^8.0",
+        "illuminate/support": "^7.0 || ^8.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^4.0|^5.0|^6.0",
-        "phpunit/phpunit": "^9.0|^9.3"
+        "orchestra/testbench": "^5.0 || ^6.0",
+        "phpunit/phpunit": "^9.3"
     },
     "autoload": {
         "psr-4": {

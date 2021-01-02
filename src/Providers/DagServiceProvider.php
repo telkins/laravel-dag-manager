@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Telkins\Dag\Providers;
 
-use Telkins\Dag\Services\DagService;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
+use Telkins\Dag\Services\DagService;
 
-class DagServiceProvider extends ServiceProvider
+class DagServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * Bootstrap the application services.
-     */
-    public function boot()
+    public function boot(): void
     {
         $this->publishes([
             __DIR__ . '/../../config/laravel-dag-manager.php' => config_path('laravel-dag-manager.php'),
@@ -30,10 +30,15 @@ class DagServiceProvider extends ServiceProvider
     /**
      * Register the application services.
      */
-    public function register()
+    public function register(): void
     {
         $this->app->singleton(DagService::class, function ($app) {
             return new DagService(config('laravel-dag-manager'));
         });
+    }
+
+    public function provides()
+    {
+        return [DagService::class];
     }
 }

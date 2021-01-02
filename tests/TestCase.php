@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Telkins\Dag\Tests;
 
-use Illuminate\Foundation\Application;
 use Illuminate\Database\Schema\Blueprint;
-use Telkins\Dag\Providers\DagServiceProvider;
+use Illuminate\Foundation\Application;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Telkins\Dag\Providers\DagServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -25,40 +27,37 @@ class TestCase extends Orchestra
     {
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => $this->getTempDirectory() . '/database.sqlite',
-            'prefix' => '',
+            'prefix'   => '',
         ]);
     }
 
-    public function getTempDirectory() : string
+    public function getTempDirectory(): string
     {
         return __DIR__ . '/temp';
     }
 
-    protected function setUpDatabase(Application $app)
+    protected function setUpDatabase(Application $app): void
     {
         $this->resetDatabase();
         $this->createDagEdgesTable();
         $this->createTestModelTable($app);
     }
 
-    protected function resetDatabase()
+    protected function resetDatabase(): void
     {
         file_put_contents($this->getTempDirectory() . '/database.sqlite', null);
     }
 
-    protected function createDagEdgesTable()
+    protected function createDagEdgesTable(): void
     {
         include_once __DIR__ . '/../database/migrations/create_dag_edges_table.php.stub';
 
         (new \CreateDagEdgesTable())->up();
     }
 
-    /**
-     * @param \Illuminate\Foundation\Application $app
-     */
-    protected function createTestModelTable(Application $app)
+    protected function createTestModelTable(Application $app): void
     {
         $app['db']->connection()->getSchemaBuilder()->create('test_models', function (Blueprint $table) {
             $table->increments('id');

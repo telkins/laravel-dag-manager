@@ -1,23 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Telkins\Dag\Tests;
 
-use Telkins\Dag\Models\DagEdge;
 use Illuminate\Support\Collection;
-use Telkins\Dag\Tests\Support\CreatesEdges;
-use Telkins\Dag\Exceptions\TooManyHopsException;
 use Telkins\Dag\Exceptions\CircularReferenceException;
+use Telkins\Dag\Exceptions\TooManyHopsException;
+use Telkins\Dag\Models\DagEdge;
+use Telkins\Dag\Tests\Support\CreatesEdges;
 
 class DagManagerTest extends TestCase
 {
     use CreatesEdges;
 
-    protected $a = 1;
-    protected $b = 2;
-    protected $c = 3;
-    protected $d = 4;
-    protected $e = 5;
-    protected $f = 6;
+    protected int $a = 1;
+    protected int $b = 2;
+    protected int $c = 3;
+    protected int $d = 4;
+    protected int $e = 5;
+    protected int $f = 6;
 
     protected function assertExpectedEdge(DagEdge $actual, int $startVertex, int $endVertex, int $hops, string $source = null)
     {
@@ -508,7 +510,8 @@ class DagManagerTest extends TestCase
     public function provideTooManyHops()
     {
         return [
-            [   /**
+            [
+                /**
                  * Tests:
                  *  - Initial:  1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 (5 hops)
                  *  - Next: 7 -> 8 (6 hops)
@@ -522,10 +525,12 @@ class DagManagerTest extends TestCase
                     ['start_vertex' => 7, 'end_vertex' => 6],
                 ],
                 [ // Last straw edge...
-                    'start_vertex' => 8, 'end_vertex' => 7,
+                    'start_vertex' => 8,
+                    'end_vertex'   => 7,
                 ],
             ],
-            [   /**
+            [
+                /**
                  * Tests:
                  *  - Initial:  1 -> 2 -> 3 (1 hop)
                  *              4 -> 5 -> 6 -> 7 -> 8 (3 hops)
@@ -540,10 +545,12 @@ class DagManagerTest extends TestCase
                     ['start_vertex' => 8, 'end_vertex' => 7],
                 ],
                 [ // Last straw edge...
-                    'start_vertex' => 4, 'end_vertex' => 3,
+                    'start_vertex' => 4,
+                    'end_vertex'   => 3,
                 ],
             ],
-            [   /**
+            [
+                /**
                  * Tests:
                  *  - Initial:  1 -> 2 -> 3 -> 4 (2 hops)
                  *              5 -> 6 -> 7 -> 8 (2 hops)
@@ -558,10 +565,12 @@ class DagManagerTest extends TestCase
                     ['start_vertex' => 8, 'end_vertex' => 7],
                 ],
                 [ // Last straw edge...
-                    'start_vertex' => 5, 'end_vertex' => 4,
+                    'start_vertex' => 5,
+                    'end_vertex'   => 4,
                 ],
             ],
-            [   /**
+            [
+                /**
                  * Tests:
                  *  - Initial:  1 -> 2 -> 3 -> 4 -> 5 (3 hops)
                  *              6 -> 7 -> 8 (1 hop)
@@ -576,10 +585,12 @@ class DagManagerTest extends TestCase
                     ['start_vertex' => 8, 'end_vertex' => 7],
                 ],
                 [ // Last straw edge...
-                    'start_vertex' => 6, 'end_vertex' => 5,
+                    'start_vertex' => 6,
+                    'end_vertex'   => 5,
                 ],
             ],
-            [   /**
+            [
+                /**
                  * Tests:
                  *  - Initial:  2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 (5 hops)
                  *  - Next: 7 -> 8 (6 hops)
@@ -593,7 +604,8 @@ class DagManagerTest extends TestCase
                     ['start_vertex' => 8, 'end_vertex' => 7],
                 ],
                 [ // Last straw edge...
-                    'start_vertex' => 2, 'end_vertex' => 1,
+                    'start_vertex' => 2,
+                    'end_vertex'   => 1,
                 ],
             ],
         ];
