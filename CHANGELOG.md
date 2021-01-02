@@ -8,14 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - ...
 
-## [v1.0.0] - 2020-12-24
+## [v1.0.0] - 2021-01-02
 ### Added
-- Remove support of Laravel lower than 8.0
-- Remove support of PHP lower than 7.4
-- Add property/argument/return types
-- Make code more strict
-- Remove redundant doc-blocks
 - Make table name configurable
+- Add property/argument/return types
+- Supports PHP 8
+- Tests via Github Actions
+
+### Removed
+- Redundant doc-blocks
+
+### Changed
+- Make code more strict
 - Migrate phpunit configuration
 - Make service provider deferrable
 
@@ -124,6 +128,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Minimal documentation.
 
 [Unreleased]: https://github.com/telkins/laravel-dag-manager/compare/v0.10.0...HEAD
+[1.0.0]: https://github.com/telkins/laravel-dag-manager/compare/v0.10.0...v1.0.0
 [0.10.0]: https://github.com/telkins/laravel-dag-manager/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/telkins/laravel-dag-manager/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/telkins/laravel-dag-manager/compare/v0.8.0...v0.9.0
