@@ -8,7 +8,8 @@ use Exception;
 
 class TooManyHopsException extends Exception
 {
-    public static function make(int $maximumAllowableHops): TooManyHopsException
+    /** @todo Change return to static once on PHP 8. */
+    public static function make(int $maximumAllowableHops): self
     {
         return new static("This operation exceeded the maximum allowable hops ({$maximumAllowableHops}).");
     }
