@@ -1,6 +1,7 @@
 # A SQL-based Directed Acyclic Graph (DAG) solution for Laravel
 
 [![Latest Stable Version](https://poser.pugx.org/telkins/laravel-dag-manager/v/stable)](https://packagist.org/packages/telkins/laravel-dag-manager)
+![run tests](https://github.com/telkins/laravel-dag-manager/workflows/run%20tests/badge.svg)
 [![Total Downloads](https://poser.pugx.org/telkins/laravel-dag-manager/downloads)](https://packagist.org/packages/telkins/laravel-dag-manager)
 [![License](https://poser.pugx.org/telkins/laravel-dag-manager/license)](https://packagist.org/packages/telkins/laravel-dag-manager)
 
