@@ -13,12 +13,12 @@ use Telkins\Dag\Models\DagEdge;
 
 class AddDagEdge
 {
-    protected string $tableName;
     protected ?string $connection;
     protected int $endVertex;
     protected int $maxHops;
     protected string $source;
     protected int $startVertex;
+    protected string $tableName;
 
     public function __construct(int $startVertex, int $endVertex, string $source, int $maxHops, string $tableName, ?string $connection = null)
     {
