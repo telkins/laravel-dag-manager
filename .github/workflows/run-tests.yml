@@ -15,7 +15,6 @@ jobs:
         ports:
             - 3306/tcp
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     strategy:
       fail-fast: true
       matrix:
@@ -26,6 +25,8 @@ jobs:
         include:
           - laravel: 8.*
             testbench: 6.*
+          - laravel: 7.*
+            testbench: 5.*
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
