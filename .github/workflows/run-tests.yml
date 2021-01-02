@@ -4,7 +4,17 @@ on: [push, pull_request]
 
 jobs:
   test:
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+            MYSQL_ALLOW_EMPTY_PASSWORD: yes
+            MYSQL_DATABASE: laravel-dag-manager-db
+        ports:
+            - 3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     strategy:
       fail-fast: true
       matrix:
@@ -15,9 +25,8 @@ jobs:
         include:
           - laravel: 8.*
             testbench: 6.*
-
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
-
+          - laravel: 7.*
+            testbench: 5.*
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -60,13 +69,3 @@ jobs:
           DB_NAME: laravel-dag-manager-db
           DB_PASSWORD:
           DB_USER: root
-
-      services:
-        mysql:
-          image: mysql:8.0
-          env:
-              MYSQL_ALLOW_EMPTY_PASSWORD: yes
-              MYSQL_DATABASE: laravel-dag-manager-db
-          ports:
-              - 3306
-          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
