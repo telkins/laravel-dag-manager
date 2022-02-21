@@ -51,7 +51,9 @@ class AddDagEdge
 
     protected function edgeExists(): bool
     {
-        return DagEdge::where([
+        $edgeClass = config('laravel-dag-manager.edge_model');
+
+        return $edgeClass::where([
                 ['start_vertex', $this->startVertex],
                 ['end_vertex', $this->endVertex],
                 ['hops', 0],
@@ -68,7 +70,9 @@ class AddDagEdge
             throw new CircularReferenceException();
         }
 
-        if (DagEdge::where([
+        $edgeClass = config('laravel-dag-manager.edge_model');
+
+        if ($edgeClass::where([
                 ['start_vertex', $this->endVertex],
                 ['end_vertex', $this->startVertex],
                 ['source', $this->source],
@@ -92,7 +96,9 @@ class AddDagEdge
 
     protected function createDirectEdge(): DagEdge
     {
-        $edge = DagEdge::create([
+        $edgeClass = config('laravel-dag-manager.edge_model');
+
+        $edge = $edgeClass::create([
             'start_vertex' => $this->startVertex,
             'end_vertex'   => $this->endVertex,
             'hops'         => 0,
@@ -187,7 +193,9 @@ class AddDagEdge
 
     protected function getNewlyInsertedEdges(DagEdge $edge): Collection
     {
-        return DagEdge::where('direct_edge_id', $edge->id)
+        $edgeClass = config('laravel-dag-manager.edge_model');
+
+        return $edgeClass::where('direct_edge_id', $edge->id)
             ->orderBy('hops')
             ->get();
     }

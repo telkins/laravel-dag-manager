@@ -159,6 +159,31 @@ $ancestors = MyModel::dagAncestorsOf($myModel->id, 'my-source', 1)->get();
 
 Not providing the `$maxHops` parameter means that all descendants, ancestors, or relations will be returned.
 
+### Custom DAG edge model
+
+You can use your own model class if you need to customise the behaviour of the DAG edge model.
+
+Your custom model class must extend the `Telkins\Models\DagEdge` class:
+
+```php
+namespace App\Models;
+
+use Telkins\Models\DagEdge as BaseModel;
+
+class MyDagEdge extends BaseModel
+{
+...
+```
+
+You can then specify the fully qualified class name of your custom model in the package config file.
+
+```php
+// config/laravel-dag-manager.php
+...
+'edge_model' => \App\Models\MyDagEdge::class,
+...
+```
+
 ## Testing
 
 ```bash

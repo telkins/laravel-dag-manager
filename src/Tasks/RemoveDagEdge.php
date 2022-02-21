@@ -30,7 +30,9 @@ class RemoveDagEdge
      */
     public function execute(): bool
     {
-        $edge = DagEdge::where([
+        $edgeClass = config('laravel-dag-manager.edge_model');
+
+        $edge = $edgeClass::where([
             ['start_vertex', $this->startVertex],
             ['end_vertex', $this->endVertex],
             ['hops', 0],
