@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   test:
-    name: L${{ matrix.laravel }} - PHP${{ matrix.php }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
+    name: L${{ matrix.laravel }} - P${{ matrix.php }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     services:
       mysql:
