@@ -6,10 +6,13 @@ namespace Telkins\Dag\Tasks;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Telkins\Dag\Concerns\UsesDagConfig;
 use Telkins\Dag\Models\DagEdge;
 
 class RemoveDagEdge
 {
+    use UsesDagConfig;
+
     protected ?string $connection;
     protected int $endVertex;
     protected string $source;
@@ -30,7 +33,9 @@ class RemoveDagEdge
      */
     public function execute(): bool
     {
-        $edge = DagEdge::where([
+        $edgeClass = $this->dagEdgeModel();
+
+        $edge = $edgeClass::where([
             ['start_vertex', $this->startVertex],
             ['end_vertex', $this->endVertex],
             ['hops', 0],

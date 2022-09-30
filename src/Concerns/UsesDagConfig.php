@@ -15,4 +15,9 @@ trait UsesDagConfig
     {
         return config('laravel-dag-manager.table_name');
     }
+
+    public function dagEdgeModel(): ?string
+    {
+        return config('laravel-dag-manager.edge_model');
+    }
 }

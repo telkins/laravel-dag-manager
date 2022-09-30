@@ -7,12 +7,15 @@ namespace Telkins\Dag\Tasks;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Telkins\Dag\Concerns\UsesDagConfig;
 use Telkins\Dag\Exceptions\CircularReferenceException;
 use Telkins\Dag\Exceptions\TooManyHopsException;
 use Telkins\Dag\Models\DagEdge;
 
 class AddDagEdge
 {
+    use UsesDagConfig;
+
     protected ?string $connection;
     protected int $endVertex;
     protected int $maxHops;
@@ -51,7 +54,9 @@ class AddDagEdge
 
     protected function edgeExists(): bool
     {
-        return DagEdge::where([
+        $edgeClass = $this->dagEdgeModel();
+
+        return $edgeClass::where([
                 ['start_vertex', $this->startVertex],
                 ['end_vertex', $this->endVertex],
                 ['hops', 0],
@@ -68,7 +73,9 @@ class AddDagEdge
             throw new CircularReferenceException();
         }
 
-        if (DagEdge::where([
+        $edgeClass = $this->dagEdgeModel();
+
+        if ($edgeClass::where([
                 ['start_vertex', $this->endVertex],
                 ['end_vertex', $this->startVertex],
                 ['source', $this->source],
@@ -92,7 +99,9 @@ class AddDagEdge
 
     protected function createDirectEdge(): DagEdge
     {
-        $edge = DagEdge::create([
+        $edgeClass = $this->dagEdgeModel();
+
+        $edge = $edgeClass::create([
             'start_vertex' => $this->startVertex,
             'end_vertex'   => $this->endVertex,
             'hops'         => 0,
@@ -187,7 +196,9 @@ class AddDagEdge
 
     protected function getNewlyInsertedEdges(DagEdge $edge): Collection
     {
-        return DagEdge::where('direct_edge_id', $edge->id)
+        $edgeClass = $this->dagEdgeModel();
+
+        return $edgeClass::where('direct_edge_id', $edge->id)
             ->orderBy('hops')
             ->get();
     }

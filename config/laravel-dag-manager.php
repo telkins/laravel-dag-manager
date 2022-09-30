@@ -44,4 +44,14 @@ return [
 
     'table_name' => 'dag_edges',
 
+    /**
+     *-------------------------------------------------------------------------
+     * Edge Model
+     *-------------------------------------------------------------------------
+     *
+     * The fully qualified class name of the DAG edge model.
+     */
+
+    'edge_model' => \Telkins\Dag\Models\DagEdge::class,
+
 ];
