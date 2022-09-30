@@ -161,7 +161,7 @@ Not providing the `$maxHops` parameter means that all descendants, ancestors, or
 
 ### Custom DAG edge model
 
-You can use your own model class if you need to customise the behaviour of the DAG edge model.
+You can use your own model class if you need to customise the behavior of the DAG edge model.
 
 Your custom model class must extend the `Telkins\Models\DagEdge` class:
 
