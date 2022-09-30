@@ -7,12 +7,15 @@ namespace Telkins\Dag\Tasks;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Telkins\Dag\Concerns\UsesDagConfig;
 use Telkins\Dag\Exceptions\CircularReferenceException;
 use Telkins\Dag\Exceptions\TooManyHopsException;
 use Telkins\Dag\Models\DagEdge;
 
 class AddDagEdge
 {
+    use UsesDagConfig;
+
     protected ?string $connection;
     protected int $endVertex;
     protected int $maxHops;
@@ -51,7 +54,7 @@ class AddDagEdge
 
     protected function edgeExists(): bool
     {
-        $edgeClass = config('laravel-dag-manager.edge_model');
+        $edgeClass = $this->dagEdgeModel();
 
         return $edgeClass::where([
                 ['start_vertex', $this->startVertex],
@@ -70,7 +73,7 @@ class AddDagEdge
             throw new CircularReferenceException();
         }
 
-        $edgeClass = config('laravel-dag-manager.edge_model');
+        $edgeClass = $this->dagEdgeModel();
 
         if ($edgeClass::where([
                 ['start_vertex', $this->endVertex],
@@ -96,7 +99,7 @@ class AddDagEdge
 
     protected function createDirectEdge(): DagEdge
     {
-        $edgeClass = config('laravel-dag-manager.edge_model');
+        $edgeClass = $this->dagEdgeModel();
 
         $edge = $edgeClass::create([
             'start_vertex' => $this->startVertex,
@@ -193,7 +196,7 @@ class AddDagEdge
 
     protected function getNewlyInsertedEdges(DagEdge $edge): Collection
     {
-        $edgeClass = config('laravel-dag-manager.edge_model');
+        $edgeClass = $this->dagEdgeModel();
 
         return $edgeClass::where('direct_edge_id', $edge->id)
             ->orderBy('hops')
