@@ -39,4 +39,9 @@ class DagEdge extends Model
     {
         return $this->defaultTableName();
     }
+
+    public function getTable()
+    {
+        return $this->defaultTableName();
+    }
 }
