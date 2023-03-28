@@ -35,7 +35,7 @@ class DagEdge extends Model
         return $this->defaultDatabaseConnectionName();
     }
 
-    public function getTableName()
+    public function getTable()
     {
         return $this->defaultTableName();
     }
