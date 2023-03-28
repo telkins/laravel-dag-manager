@@ -201,7 +201,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public function provideMaxHopsForSimpleChainAllRelations()
+    public static function provideMaxHopsForSimpleChainAllRelations()
     {
         return [
             [0, ['a', 'c']],
@@ -257,7 +257,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public function provideMaxHopsForComplexBoxDiamondAllRelations()
+    public static function provideMaxHopsForComplexBoxDiamondAllRelations()
     {
         return [
             [0, ['a', 'd', 'e']],
@@ -587,7 +587,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public function provideMaxHopsForSimpleChain()
+    public static function provideMaxHopsForSimpleChain()
     {
         return [
             [0, ['b']],
@@ -643,7 +643,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public function provideMaxHopsForComplexBoxDiamond()
+    public static function provideMaxHopsForComplexBoxDiamond()
     {
         return [
             [0, ['b', 'c']],
@@ -703,7 +703,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public function provideMaxHopsForSimpleChainUp()
+    public static function provideMaxHopsForSimpleChainUp()
     {
         return [
             [0, ['c']],
@@ -758,7 +758,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public function provideMaxHopsForComplexBoxDiamondUp()
+    public static function provideMaxHopsForComplexBoxDiamondUp()
     {
         return [
             [0, ['e', 'd']],
@@ -808,7 +808,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public function provideComplexInputForComplexBoxDiamondDown()
+    public static function provideComplexInputForComplexBoxDiamondDown()
     {
         return [
             [['b', 'c'], null, ['d', 'e', 'f']],
@@ -873,7 +873,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public function provideComplexInputForComplexBoxDiamondUp()
+    public static function provideComplexInputForComplexBoxDiamondUp()
     {
         return [
             [['d', 'e'], null, ['a', 'b', 'c']],
@@ -902,7 +902,7 @@ class IsDagManagedTraitTest extends TestCase
 
     /**
      * @test
-     * @dataProvider providInvalidModelIdArguments
+     * @dataProvider provideInvalidModelIdArguments
      */
     public function it_rejects_invalid_model_id_arguments_to_dag_descendants_of_scope($invalidArgument)
     {
@@ -927,7 +927,7 @@ class IsDagManagedTraitTest extends TestCase
 
     /**
      * @test
-     * @dataProvider providInvalidModelIdArguments
+     * @dataProvider provideInvalidModelIdArguments
      */
     public function it_rejects_invalid_model_id_arguments_to_dag_ancestors_of_scope($invalidArgument)
     {
@@ -952,7 +952,7 @@ class IsDagManagedTraitTest extends TestCase
 
     /**
      * @test
-     * @dataProvider providInvalidModelIdArguments
+     * @dataProvider provideInvalidModelIdArguments
      */
     public function it_rejects_invalid_model_id_arguments_to_dag_relations_of_scope($invalidArgument)
     {
@@ -975,7 +975,7 @@ class IsDagManagedTraitTest extends TestCase
         TestModel::dagRelationsOf($invalidArgument, $this->source);
     }
 
-    public function providInvalidModelIdArguments()
+    public static function provideInvalidModelIdArguments()
     {
         return [
             [null],
