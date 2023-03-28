@@ -507,7 +507,7 @@ class DagManagerTest extends TestCase
         $this->createEdge($lastStrawEdge['start_vertex'], $lastStrawEdge['end_vertex']);
     }
 
-    public function provideTooManyHops()
+    public static function provideTooManyHops()
     {
         return [
             [

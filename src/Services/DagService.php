@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Telkins\Dag\Services;
 
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
-use Telkins\Dag\Tasks\AddDagEdge;
-use Telkins\Dag\Tasks\RemoveDagEdge;
+use Telkins\Dag\Actions\AddDagEdge;
+use Telkins\Dag\Actions\RemoveDagEdge;
+use Telkins\Dag\Concerns\EdgeData;
+use Throwable;
 
 use function collect;
 use function is_int;
@@ -39,13 +40,15 @@ class DagService
     {
         DB::connection($this->connection)->beginTransaction();
         try {
-            $newEdges = (new AddDagEdge($startVertex, $endVertex, $source, $this->maxHops, $this->tableName, $this->connection))->execute();
+            $edgeData = new EdgeData($startVertex, $endVertex, $source, $this->tableName, $this->connection);
+
+            $newEdges = app(AddDagEdge::class)($edgeData, $this->maxHops);
 
             DB::connection($this->connection)->commit();
-        } catch (Exception $e) {
+        } catch (Throwable $th) {
             DB::connection($this->connection)->rollBack();
 
-            throw $e;
+            throw $th;
         }
 
         return $newEdges;
@@ -55,13 +58,15 @@ class DagService
     {
         DB::connection($this->connection)->beginTransaction();
         try {
-            $removed = (new RemoveDagEdge($startVertex, $endVertex, $source, $this->tableName, $this->connection))->execute();
+            $edgeData = new EdgeData($startVertex, $endVertex, $source, $this->tableName, $this->connection);
+
+            $removed = app(RemoveDagEdge::class)($edgeData);
 
             DB::connection($this->connection)->commit();
-        } catch (Exception $e) {
+        } catch (Throwable $th) {
             DB::connection($this->connection)->rollBack();
 
-            throw $e;
+            throw $th;
         }
 
         return $removed;
