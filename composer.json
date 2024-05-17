@@ -25,11 +25,11 @@
         "illuminate/contracts": "^11.0",
         "illuminate/database": "^11.0",
         "illuminate/support": "^11.0",
-        "spatie/laravel-data": "^3.2"
+        "spatie/laravel-data": "^4.6"
     },
     "require-dev": {
         "orchestra/testbench": "^9.0",
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^11.1"
     },
     "autoload": {
         "psr-4": {
