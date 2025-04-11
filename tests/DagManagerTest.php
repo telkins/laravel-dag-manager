@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Telkins\Dag\Tests;
 
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Telkins\Dag\Exceptions\CircularReferenceException;
 use Telkins\Dag\Exceptions\TooManyHopsException;
 use Telkins\Dag\Models\DagEdge;
@@ -33,9 +35,8 @@ class DagManagerTest extends TestCase
      * Tests:  A  Inserting A-B
      *         |
      *         B
-     *
-     * @test
      */
+    #[Test]
     public function it_can_add_a_simple_edge()
     {
         /**
@@ -76,9 +77,8 @@ class DagManagerTest extends TestCase
      *         C
      *         |  <-- this should fail
      *         A
-     *
-     * @test
      */
+    #[Test]
     public function it_does_not_allow_circular_references()
     {
         /**
@@ -113,9 +113,8 @@ class DagManagerTest extends TestCase
      *         A
      *         |
      *         B
-     *
-     * @test
      */
+    #[Test]
     public function it_returns_null_when_trying_to_add_a_duplicate()
     {
         /**
@@ -147,9 +146,8 @@ class DagManagerTest extends TestCase
      *         C
      *         |
      *         D
-     *
-     * @test
      */
+    #[Test]
     public function it_can_build_a_simple_chain()
     {
         /**
@@ -190,9 +188,8 @@ class DagManagerTest extends TestCase
      *         C
      *         |
      *         D
-     *
-     * @test
      */
+    #[Test]
     public function it_can_build_a_simple_chain_in_reverse()
     {
         /**
@@ -233,9 +230,8 @@ class DagManagerTest extends TestCase
      *         C
      *         |
      *         D
-     *
-     * @test
      */
+    #[Test]
     public function it_can_build_a_simple_chain_in_inside_out()
     {
         /**
@@ -278,9 +274,8 @@ class DagManagerTest extends TestCase
      *         C
      *         |
      *         D
-     *
-     * @test
      */
+    #[Test]
     public function it_can_build_a_simple_chain_in_inside_out_and_reverse()
     {
         /**
@@ -319,9 +314,8 @@ class DagManagerTest extends TestCase
      *       B   C
      *        \ /
      *         D
-     *
-     * @test
      */
+    #[Test]
     public function it_can_build_a_simple_diamond()
     {
         /**
@@ -369,9 +363,8 @@ class DagManagerTest extends TestCase
      *       D   E
      *        \ /
      *         F
-     *
-     * @test
      */
+    #[Test]
     public function it_can_build_a_simple_box_diamond()
     {
         /**
@@ -425,9 +418,8 @@ class DagManagerTest extends TestCase
      *       B C D
      *        \|/
      *         E
-     *
-     * @test
      */
+    #[Test]
     public function it_can_build_a_simple_tri_diamond()
     {
         /**
@@ -478,10 +470,8 @@ class DagManagerTest extends TestCase
         $this->assertExpectedEdge($newEdges3->shift(), $this->e, $this->a, 1);
     }
 
-    /**
-     * @test
-     * @dataProvider provideTooManyHops
-     */
+    #[Test]
+    #[DataProvider('provideTooManyHops')]
     public function it_cannot_exceed_max_hops($initialEdges, $lastStrawEdge)
     {
         /**
@@ -507,7 +497,7 @@ class DagManagerTest extends TestCase
         $this->createEdge($lastStrawEdge['start_vertex'], $lastStrawEdge['end_vertex']);
     }
 
-    public static function provideTooManyHops()
+    public static function provideTooManyHops(): array
     {
         return [
             [
@@ -577,7 +567,7 @@ class DagManagerTest extends TestCase
                  *  - Next: 5 -> 6 (6 hops)
                  */
                 [ // Initial edges...
-                    ['start_vertex' => 2, 'end_vertex' => 1],
+                        ['start_vertex' => 2, 'end_vertex' => 1],
                     ['start_vertex' => 3, 'end_vertex' => 2],
                     ['start_vertex' => 4, 'end_vertex' => 3],
                     ['start_vertex' => 5, 'end_vertex' => 4],
@@ -611,9 +601,7 @@ class DagManagerTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function deleting_non_existant_edge_by_id_returns_false()
     {
         /**
@@ -635,9 +623,7 @@ class DagManagerTest extends TestCase
         $this->assertFalse($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_delete_an_edge()
     {
         /**
@@ -669,9 +655,8 @@ class DagManagerTest extends TestCase
      *         C
      *         |
      *         D
-     *
-     * @test
      */
+    #[Test]
     public function it_can_delete_an_edge_from_a_simple_chain()
     {
         /**
@@ -709,9 +694,8 @@ class DagManagerTest extends TestCase
      * Tests:  A  Inserting A-B...twice, each with a different source
      *         |
      *         B
-     *
-     * @test
      */
+    #[Test]
     public function it_can_insert_duplicate_edges_using_different_sources()
     {
         /**
@@ -743,9 +727,8 @@ class DagManagerTest extends TestCase
      * Tests:  A  Inserting A-B...twice, each with a different source, then deleting one
      *         |
      *         B
-     *
-     * @test
      */
+    #[Test]
     public function it_can_delete_a_duplicate_edge_using_the_correct_source()
     {
         /**
