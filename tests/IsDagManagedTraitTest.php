@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Telkins\Dag\Tests;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Telkins\Dag\Tests\Support\CreatesEdges;
 use Telkins\Dag\Tests\Support\TestModel;
 
@@ -20,9 +22,8 @@ class IsDagManagedTraitTest extends TestCase
      *         C
      *         |
      *         D
-     *
-     * @test
      */
+    #[Test]
     public function it_can_get_all_relations_from_a_simple_chain()
     {
         /**
@@ -69,9 +70,8 @@ class IsDagManagedTraitTest extends TestCase
      *       D   E
      *        \ /
      *         F
-     *
-     * @test
      */
+    #[Test]
     public function it_can_get_all_relations_from_a_complex_box_diamond_part_i()
     {
         /**
@@ -116,9 +116,8 @@ class IsDagManagedTraitTest extends TestCase
      *       D   E
      *        \ /
      *         F
-     *
-     * @test
      */
+    #[Test]
     public function it_can_get_all_relations_from_a_complex_box_diamond_part_ii()
     {
         /**
@@ -161,10 +160,9 @@ class IsDagManagedTraitTest extends TestCase
      *         C
      *         |
      *         D
-     *
-     * @test
-     * @dataProvider provideMaxHopsForSimpleChainAllRelations
      */
+    #[Test]
+    #[DataProvider('provideMaxHopsForSimpleChainAllRelations')]
     public function it_can_get_all_relations_from_a_simple_chain_constrained_by_max_hops($maxHops, $expectedNames)
     {
         /**
@@ -201,7 +199,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public static function provideMaxHopsForSimpleChainAllRelations()
+    public static function provideMaxHopsForSimpleChainAllRelations(): array
     {
         return [
             [0, ['a', 'c']],
@@ -221,10 +219,9 @@ class IsDagManagedTraitTest extends TestCase
      *       D   E
      *        \ /
      *         F
-     *
-     * @test
-     * @dataProvider provideMaxHopsForComplexBoxDiamondAllRelations
      */
+    #[Test]
+    #[DataProvider('provideMaxHopsForComplexBoxDiamondAllRelations')]
     public function it_can_get_all_relations_from_a_complex_box_diamond_constrained_by_max_hops($maxHops, $expectedNames)
     {
         /**
@@ -257,7 +254,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public static function provideMaxHopsForComplexBoxDiamondAllRelations()
+    public static function provideMaxHopsForComplexBoxDiamondAllRelations(): array
     {
         return [
             [0, ['a', 'd', 'e']],
@@ -277,9 +274,8 @@ class IsDagManagedTraitTest extends TestCase
      *         C
      *         |
      *         D
-     *
-     * @test
      */
+    #[Test]
     public function it_can_get_descendants_from_a_simple_chain()
     {
         /**
@@ -324,9 +320,8 @@ class IsDagManagedTraitTest extends TestCase
      *       D   E
      *        \ /
      *         F
-     *
-     * @test
      */
+    #[Test]
     public function it_can_get_descendants_from_a_complex_box_diamond_part_i()
     {
         /**
@@ -369,9 +364,8 @@ class IsDagManagedTraitTest extends TestCase
      *       D   E
      *        \ /
      *         F
-     *
-     * @test
      */
+    #[Test]
     public function it_can_get_descendants_from_a_complex_box_diamond_part_ii()
     {
         /**
@@ -412,9 +406,8 @@ class IsDagManagedTraitTest extends TestCase
      *         C  <-- get ancestors of this entry
      *         |
      *         D
-     *
-     * @test
      */
+    #[Test]
     public function it_can_get_ancestors_from_a_simple_chain()
     {
         /**
@@ -459,9 +452,8 @@ class IsDagManagedTraitTest extends TestCase
      *       D   E  <-- get ancestors of entry "E"
      *        \ /
      *         F
-     *
-     * @test
      */
+    #[Test]
     public function it_can_get_ancestors_from_a_complex_box_diamond_part_i()
     {
         /**
@@ -504,9 +496,8 @@ class IsDagManagedTraitTest extends TestCase
      *       D   E  <-- get ancestors of entry "D"
      *        \ /
      *         F
-     *
-     * @test
      */
+    #[Test]
     public function it_can_get_ancestors_from_a_complex_box_diamond_part_ii()
     {
         /**
@@ -547,10 +538,9 @@ class IsDagManagedTraitTest extends TestCase
      *         C
      *         |
      *         D
-     *
-     * @test
-     * @dataProvider provideMaxHopsForSimpleChain
      */
+    #[Test]
+    #[DataProvider('provideMaxHopsForSimpleChain')]
     public function it_can_get_descendants_from_a_simple_chain_constrained_by_max_hops($maxHops, $expectedNames)
     {
         /**
@@ -587,7 +577,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public static function provideMaxHopsForSimpleChain()
+    public static function provideMaxHopsForSimpleChain(): array
     {
         return [
             [0, ['b']],
@@ -607,10 +597,9 @@ class IsDagManagedTraitTest extends TestCase
      *       D   E
      *        \ /
      *         F
-     *
-     * @test
-     * @dataProvider provideMaxHopsForComplexBoxDiamond
      */
+    #[Test]
+    #[DataProvider('provideMaxHopsForComplexBoxDiamond')]
     public function it_can_get_descendants_from_a_complex_box_diamond_constrained_by_max_hops($maxHops, $expectedNames)
     {
         /**
@@ -643,7 +632,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public static function provideMaxHopsForComplexBoxDiamond()
+    public static function provideMaxHopsForComplexBoxDiamond(): array
     {
         return [
             [0, ['b', 'c']],
@@ -663,10 +652,9 @@ class IsDagManagedTraitTest extends TestCase
      *         C
      *         |
      *         D  <-- get ancestors of this entry
-     *
-     * @test
-     * @dataProvider provideMaxHopsForSimpleChainUp
      */
+    #[Test]
+    #[DataProvider('provideMaxHopsForSimpleChainUp')]
     public function it_can_get_ancestors_from_a_simple_chain_constrained_by_max_hops($maxHops, $expectedNames)
     {
         /**
@@ -703,7 +691,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public static function provideMaxHopsForSimpleChainUp()
+    public static function provideMaxHopsForSimpleChainUp(): array
     {
         return [
             [0, ['c']],
@@ -722,10 +710,9 @@ class IsDagManagedTraitTest extends TestCase
      *       D   E
      *        \ /
      *         F   <-- get ancestors of entry "F"
-     *
-     * @test
-     * @dataProvider provideMaxHopsForComplexBoxDiamondUp
      */
+    #[Test]
+    #[DataProvider('provideMaxHopsForComplexBoxDiamondUp')]
     public function it_can_get_ancestors_from_a_complex_box_diamond_constrained_by_max_hops($maxHops, $expectedNames)
     {
         /**
@@ -758,7 +745,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public static function provideMaxHopsForComplexBoxDiamondUp()
+    public static function provideMaxHopsForComplexBoxDiamondUp(): array
     {
         return [
             [0, ['e', 'd']],
@@ -770,10 +757,8 @@ class IsDagManagedTraitTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideComplexInputForComplexBoxDiamondDown
-     */
+    #[Test]
+    #[DataProvider('provideComplexInputForComplexBoxDiamondDown')]
     public function it_can_get_descendants_with_complex_input($modelNames, $maxHops, $expectedNames)
     {
         /**
@@ -808,7 +793,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public static function provideComplexInputForComplexBoxDiamondDown()
+    public static function provideComplexInputForComplexBoxDiamondDown(): array
     {
         return [
             [['b', 'c'], null, ['d', 'e', 'f']],
@@ -835,10 +820,8 @@ class IsDagManagedTraitTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideComplexInputForComplexBoxDiamondUp
-     */
+    #[Test]
+    #[DataProvider('provideComplexInputForComplexBoxDiamondUp')]
     public function it_can_get_ancestors_with_complex_input($modelNames, $maxHops, $expectedNames)
     {
         /**
@@ -873,7 +856,7 @@ class IsDagManagedTraitTest extends TestCase
         });
     }
 
-    public static function provideComplexInputForComplexBoxDiamondUp()
+    public static function provideComplexInputForComplexBoxDiamondUp(): array
     {
         return [
             [['d', 'e'], null, ['a', 'b', 'c']],
@@ -900,10 +883,8 @@ class IsDagManagedTraitTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider provideInvalidModelIdArguments
-     */
+    #[Test]
+    #[DataProvider('provideInvalidModelIdArguments')]
     public function it_rejects_invalid_model_id_arguments_to_dag_descendants_of_scope($invalidArgument)
     {
         /**
@@ -925,10 +906,8 @@ class IsDagManagedTraitTest extends TestCase
         TestModel::dagDescendantsOf($invalidArgument, $this->source);
     }
 
-    /**
-     * @test
-     * @dataProvider provideInvalidModelIdArguments
-     */
+    #[Test]
+    #[DataProvider('provideInvalidModelIdArguments')]
     public function it_rejects_invalid_model_id_arguments_to_dag_ancestors_of_scope($invalidArgument)
     {
         /**
@@ -950,10 +929,8 @@ class IsDagManagedTraitTest extends TestCase
         TestModel::dagAncestorsOf($invalidArgument, $this->source);
     }
 
-    /**
-     * @test
-     * @dataProvider provideInvalidModelIdArguments
-     */
+    #[Test]
+    #[DataProvider('provideInvalidModelIdArguments')]
     public function it_rejects_invalid_model_id_arguments_to_dag_relations_of_scope($invalidArgument)
     {
         /**
@@ -975,7 +952,7 @@ class IsDagManagedTraitTest extends TestCase
         TestModel::dagRelationsOf($invalidArgument, $this->source);
     }
 
-    public static function provideInvalidModelIdArguments()
+    public static function provideInvalidModelIdArguments(): array
     {
         return [
             [null],
