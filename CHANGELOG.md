@@ -5,8 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Laravel 13 support
+- PHP 8.5 support
+
 ### Changed
-- ...
+- Require PHP 8.3 or higher
+- Test against Laravel 12 and 13 (orchestra/testbench 10 and 11) and PHP 8.3, 8.4, and 8.5
 
 ## [v1.0.0] - 2021-01-02
 ### Added
